@@ -11,6 +11,10 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.17.1",
+    "koop": "^4.2.1",
+    "koop-provider-pg": "^1.0.5"
+  },
+  "devDependencies": {
     "nodemon": "^2.0.14"
   }
 }
