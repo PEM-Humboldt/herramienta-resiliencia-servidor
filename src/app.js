@@ -3,8 +3,9 @@ const Koop = require('koop')
 const provider = require('koop-provider-pg')
 
 const error_handler = require('./utils/error_handler')
-const file_extract = require('./file_extract');
-const upload = require('./file_upload');
+const extract_file = require('./extract_file');
+const upload_file = require('./upload_file');
+const upload_layer = require('./upload_layer');
 
 const app = express()
 const port = 3000
@@ -18,7 +19,7 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-app.post('/upload', upload.single('layer'), async function ({ file, body }, res, next) {
+app.post('/upload', upload_file.single('layer'), async function ({ file, body }, res, next) {
   console.log('archivo recibido: ', file.filename, file.originalname, file);
   const fields = ['srid'];
   missing = fields.filter(field => !(field in body));
@@ -34,11 +35,13 @@ app.post('/upload', upload.single('layer'), async function ({ file, body }, res,
 
   try {
     const zip_name = file.filename.substring(0, file.filename.length - 4);
-    await file_extract(zip_name);
-    console.log(process.env)
-    res.sendStatus(204);
+    const shp_folder = await extract_file(zip_name);
+    await upload_layer(shp_folder, zip_name, body.srid)
+    res.status(200).send({ message: `Capa ${zip_name} cargada exitosamente` });
   } catch (error) {
-    res.status(500).send(`Ocurrió un error: ${error}`)
+    const err = new Error(`Ocurrió un error: ${error}`);
+    err.code = 'INTERNAL_ERROR';
+    throw err;
   }
 })
 

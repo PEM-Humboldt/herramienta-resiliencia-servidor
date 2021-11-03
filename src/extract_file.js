@@ -28,5 +28,5 @@ module.exports = (filename) => {
         rej('Extracción fallida, ver logs para más información');
       }
     });
-  })
+  });
 };

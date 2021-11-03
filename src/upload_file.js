@@ -3,7 +3,8 @@ const multer  = require('multer')
 const storage = multer.diskStorage({
   destination: `${process.cwd()}/uploads/`,
   filename: function (req, file, cb) {
-    cb(null, file.originalname);
+    const name = file.originalname.substring(0, file.originalname.length - 4)
+    cb(null, `${name.replace(/[^\w-]/gi, '')}.zip`);
   }
 });
 
