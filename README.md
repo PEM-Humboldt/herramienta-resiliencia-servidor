@@ -1,4 +1,4 @@
-# Server
+# Servidor de la Herramienta de Resiliencia
 
 Servicio para cargar capas geográficas en formato shp y disponerlas en formato FeatureServer o MapServer
 
@@ -7,7 +7,7 @@ El modo de uso recomendado es por medio de un contenedor de Docker (v20.10.8), y
 ```
 docker run -d --name db kartoza/postgis:13.0
 ```
-Este comando crea por defecto una base de datos `gis`, con usuario `docker` y contraseña `docker`; se recomienda cambiar estos valores por defecto.
+Este comando crea por defecto una base de datos `gis`, con usuario `docker` y contraseña `docker`; se recomienda cambiar estos valores por defecto (ver cómo [aquí](https://hub.docker.com/r/kartoza/postgis)).
 
 >Si se desean instalar todas las partes en un sistema sin usar el contenedor se requiere lo siguiente:
 >- Node.js v16.13.0
@@ -51,3 +51,7 @@ Para el desarrollo también se recomienda usar Docker.
 
 ## Licencia
 Este proyecto está licenciado bajo la licencia [MIT](LICENSE)
+
+## Reconocimientos
+
+Esta aplicación hace parte de la herramienta del componente 2 del convenio [FIBRAS](http://humboldt.org.co/fibras/componente2.html) entre el Instituto Humboldt y Ecopetrol
