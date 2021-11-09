@@ -54,4 +54,4 @@ Este proyecto está licenciado bajo la licencia [MIT](LICENSE)
 
 ## Reconocimientos
 
-Esta aplicación hace parte de la herramienta del componente 2 del convenio [FIBRAS](http://humboldt.org.co/fibras/componente2.html) entre el Instituto Humboldt y Ecopetrol
+Esta aplicación hace parte de los resultados del componente 2 del acuerdo No. 19-155 firmado entre el Instituto Humboldt y Ecopetrol [FIBRAS](http://humboldt.org.co/fibras/componente2.html)
