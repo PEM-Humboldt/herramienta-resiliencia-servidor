@@ -1,0 +1,28 @@
+version: '3'
+services:
+  gs_db:
+    image: kartoza/postgis:13.0
+    container_name: gs_db
+    restart: always
+    networks:
+      - server_net
+
+  geoserver:
+    image: kartoza/geoserver:2.18.0
+    container_name: geoserver
+    ports:
+      - "8080:8080"
+    volumes:
+      - /home/esuarez/ecopetrol/geoserver_data:/opt/geoserver/data_dir
+    healthcheck:
+      test: curl --fail -s http://localhost:8080/ || exit 1
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+    restart: always
+    networks:
+      - server_net
+
+networks:
+  server_net:
+    driver: bridge
