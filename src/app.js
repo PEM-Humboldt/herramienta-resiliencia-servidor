@@ -1,52 +1,75 @@
-const express = require('express')
-const Koop = require('koop')
-const provider = require('koop-provider-pg')
+const express = require("express");
+const helmet = require("helmet");
 
-const error_handler = require('./utils/error_handler')
-const extract_file = require('./extract_file');
-const upload_file = require('./upload_file');
-const upload_layer = require('./upload_layer');
+const {
+  upload: upload_file,
+  extract: extract_file,
+  compress: compress_file,
+} = require("./file_utils");
+const { create_workspace, create_datastore } = require("./geoserver");
+const upload_layer = require("./upload_layer");
+const error_handler = require("./utils/error_handler");
 
-const app = express()
-const port = 3000
+const app = express();
+const port = 3000;
 
-const koop = new Koop()
-koop.register(provider)
+app.use(helmet());
 
-app.use('/koop', koop.server)
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+const wrapAsync = (fn) => {
+  return (req, res, next) => {
+    const fnReturn = fn(req, res, next);
 
-app.post('/upload', upload_file.single('layer'), async function ({ file, body }, res, next) {
-  console.log('archivo recibido: ', file.filename, file.originalname, file);
-  const fields = ['srid'];
-  missing = fields.filter(field => !(field in body));
-  if (missing.length > 0) {
-    const error = new Error('Hay campos faltantes');
-    error.code = 'MISSING_FORM_FIELDS';
-    error.fields = missing.join(', ');
-    throw error;
-  }
-  if (!file) {
-    throw new Error("el campo 'layer' es requerido y tiene que ser un archivo .zip");
-  }
+    return Promise.resolve(fnReturn).catch(next);
+  };
+};
 
-  try {
-    const zip_name = file.filename.substring(0, file.filename.length - 4);
-    const shp_folder = await extract_file(zip_name);
-    await upload_layer(shp_folder, zip_name, body.srid)
-    res.status(200).send({ message: `Capa ${zip_name} cargada exitosamente` });
-  } catch (error) {
-    const err = new Error(`Ocurrió un error: ${error}`);
-    err.code = 'INTERNAL_ERROR';
-    throw err;
-  }
-})
+app.post(
+  "/upload",
+  upload_file.single("layer"),
+  wrapAsync(async function ({ file, body }, res, next) {
+    console.log("archivo recibido: ", file.filename, file.originalname, file);
+    const fields = ["srid"];
+    missing = fields.filter((field) => !(field in body));
+    if (missing.length > 0) {
+      const error = new Error("Hay campos faltantes");
+      error.code = "MISSING_FORM_FIELDS";
+      error.fields = missing.join(", ");
+      throw error;
+    }
+    if (!file) {
+      throw new Error(
+        "el campo 'layer' es requerido y tiene que ser un archivo .zip"
+      );
+    }
 
-app.use(error_handler)
+    try {
+      const shp_name = file.filename.substring(0, file.filename.length - 4);
+      const shp_folder = await extract_file(shp_name);
+
+      // Load to Geoserver
+      const zip_path = await compress_file(shp_name, shp_folder);
+      await create_workspace(shp_name);
+      await create_datastore(shp_name, zip_path);
+
+      // Load to PostGIS
+      await upload_layer(shp_folder, shp_name, body.srid);
+      res
+        .status(200)
+        .send({ message: `Capa ${shp_name} cargada exitosamente` });
+    } catch (error) {
+      const err = new Error(error);
+      if (!err.code) err.code = "INTERNAL_ERROR";
+      throw err;
+    }
+  })
+);
+
+app.use(error_handler);
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
-})
+  console.log(`Example app listening at http://localhost:${port}`);
+});

@@ -1,9 +1,33 @@
-version: '3'
+version: "3"
 services:
   gs_db:
     image: kartoza/postgis:13.0
     container_name: gs_db
+    ports:
+      - "5432:5432"
     restart: always
+    networks:
+      - server_net
+
+  tool_server:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: tool_derver_dev
+    container_name: tool_server
+    ports:
+      - "3000:3000"
+    restart: always
+    volumes:
+      - .:/home/node/app #dev volume
+    environment:
+      - PG_HOST=${PG_HOST}
+      - PG_PORT=${PG_PORT}
+      - PG_DATABASE=${PG_DATABASE}
+      - PG_USER=${PG_USER}
+      - PG_PASSWORD=${PG_PASSWORD}
+      - GS_USER=${GS_USER}
+      - GS_PASS=${GS_PASS}
     networks:
       - server_net
 
@@ -13,7 +37,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - /home/esuarez/ecopetrol/geoserver_data:/opt/geoserver/data_dir
+      - ../geoserver_data:/opt/geoserver/data_dir
     healthcheck:
       test: curl --fail -s http://localhost:8080/ || exit 1
       interval: 1m30s
