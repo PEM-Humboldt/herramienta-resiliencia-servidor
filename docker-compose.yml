@@ -13,7 +13,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    image: tool_derver_dev
+    image: tool_server_dev
     container_name: tool_server
     ports:
       - "3000:3000"
