@@ -9,6 +9,7 @@ const {
 const { create_workspace, create_datastore } = require("./geoserver");
 const upload_layer = require("./upload_layer");
 const error_handler = require("./utils/error_handler");
+const logger = require('./utils/logger');
 
 const app = express();
 const port = 3000;
@@ -31,7 +32,7 @@ app.post(
   "/upload",
   upload_file.single("layer"),
   wrapAsync(async function ({ file, body }, res, next) {
-    console.log("archivo recibido: ", file.filename, file.originalname, file);
+    logger.info("archivo recibido: ", file.filename, file.originalname, file);
     const fields = ["srid"];
     missing = fields.filter((field) => !(field in body));
     if (missing.length > 0) {
@@ -71,5 +72,5 @@ app.post(
 app.use(error_handler);
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+  logger.info(`Example app listening at http://localhost:${port}`);
 });
