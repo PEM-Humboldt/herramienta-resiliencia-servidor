@@ -13,6 +13,17 @@ services:
     networks:
       - server_net
 
+  tool_simulator:
+    build:
+      context: ../herramienta-resiliencia-simulador # TODO: CHANGE TO TAG URL
+      args:
+        userpassword: ${MODEL_PASSWORD}
+    image: tool_simulator
+    container_name: tool_simulator
+    restart: always
+    networks:
+      - server_net
+
   tool_server:
     build:
       context: .
