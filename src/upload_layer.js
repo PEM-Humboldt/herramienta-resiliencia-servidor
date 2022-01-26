@@ -15,11 +15,11 @@ module.exports = async (folder, layer, srid) => {
   }
 
   const {PG_HOST, PG_USER, PG_DATABASE, PG_PASSWORD, PG_PORT} = process.env;
-  logger.info(`shp2pgsql -c -D -s ${srid} -I ${folder}/${shp_file} public.${layer} | PGPASSWORD=${PG_PASSWORD} psql -h ${PG_HOST} -p ${PG_PORT} -U ${PG_USER} -d ${PG_DATABASE}`)
+  logger.info(`shp2pgsql -d -D -s ${srid} -I ${folder}/${shp_file} public.${layer} | PGPASSWORD=### psql -h ${PG_HOST} -p ${PG_PORT} -U ${PG_USER} -d ${PG_DATABASE}`)
   return new Promise((res, rej) => {
     const unzip = spawn('sh', [
       '-c',
-      `shp2pgsql -c -D -s ${srid} -I ${folder}/${shp_file} public.${layer} | PGPASSWORD=${PG_PASSWORD} psql -h ${PG_HOST} -p ${PG_PORT} -U ${PG_USER} -d ${PG_DATABASE}`
+      `shp2pgsql -d -D -s ${srid} -I ${folder}/${shp_file} public.${layer} | PGPASSWORD=${PG_PASSWORD} psql -h ${PG_HOST} -p ${PG_PORT} -U ${PG_USER} -d ${PG_DATABASE}`
     ]);
 
     unzip.stdout.on('data', (data) => {
