@@ -1,9 +1,23 @@
-const { readdir } = require("fs/promises");
+const { readdir, unlink } = require("fs/promises");
 const { NodeSSH } = require("node-ssh");
+const path = require("path");
 
 const logger = require("./utils/logger");
 
-module.exports = () => {
+const OUTPUTS_DIR = `${process.cwd()}/model_outputs`;
+
+const clearPreviousResults = async () => {
+  try {
+    const files = await readdir(OUTPUTS_DIR);
+    files.forEach((file) => unlink(path.join(OUTPUTS_DIR, file)));
+  } catch (error) {
+    const err = new Error(`Ocurrió un error: ${error}`);
+    err.code = "INTERNAL_ERROR";
+    throw err;
+  }
+};
+
+const exec = async () => {
   const {
     PG_HOST,
     PG_PORT,
@@ -13,6 +27,7 @@ module.exports = () => {
     MODEL_PASSWORD,
   } = process.env;
 
+  await clearPreviousResults();
   return new Promise((res, rej) => {
     const ssh = new NodeSSH();
     ssh
@@ -37,7 +52,7 @@ module.exports = () => {
             logger.info(
               `Simulación finalizada. Código: ${result.code} - stdout: ${result.stdout}`
             );
-            res();
+            res(path.join(OUTPUTS_DIR, "cover_time_series.csv"));
           })
           .catch((err) => {
             logger.error(`Simulación - error: ${err}`);
@@ -46,3 +61,5 @@ module.exports = () => {
       });
   });
 };
+
+module.exports = { exec };

@@ -7,7 +7,7 @@ const {
   compress: compress_file,
 } = require("./file_utils");
 const { create_workspace, create_datastore } = require("./geoserver");
-const model = require("./model");
+const { exec: exec_model } = require("./model");
 const upload_layer = require("./upload_layer");
 const error_handler = require("./utils/error_handler");
 const logger = require("./utils/logger");
@@ -24,7 +24,6 @@ app.get("/", (req, res) => {
 const wrapAsync = (fn) => {
   return (req, res, next) => {
     const fnReturn = fn(req, res, next);
-
     return Promise.resolve(fnReturn).catch(next);
   };
 };
@@ -32,7 +31,7 @@ const wrapAsync = (fn) => {
 app.post(
   "/upload",
   upload_file.single("layer"),
-  wrapAsync(async function ({ file, body }, res, next) {
+  wrapAsync(async ({ file, body }, res, next) => {
     logger.info("archivo recibido: ", file.filename, file.originalname, file);
     const fields = ["srid"];
     missing = fields.filter((field) => !(field in body));
@@ -70,20 +69,19 @@ app.post(
   })
 );
 
-app.get("/exec", (req, res, next) => {
-  model()
-    .then(() =>
-      res
-        .status(200)
-        .send({ message: "Simulador ejecutado satisfactoriamente." })
-    )
-    .catch((error) => {
+app.get(
+  "/exec",
+  wrapAsync(async (req, res, next) => {
+    try {
+      const result_file = await exec_model();
+      res.download(result_file);
+    } catch (error) {
       const err = new Error(error || "Ocurrió un error");
       if (!err.code) err.code = "INTERNAL_ERROR";
       throw err;
-    })
-    .catch(next);
-});
+    }
+  })
+);
 
 app.use(error_handler);
 

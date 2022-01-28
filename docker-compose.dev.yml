@@ -19,7 +19,8 @@ services:
         userpassword: ${MODEL_PASSWORD}
     image: tool_simulator
     container_name: tool_simulator
-    restart: always
+    volumes:
+      - ${MODEL_OUPUTS_DIR}:/home/model/app/outputs
     networks:
       - server_net
 
@@ -33,6 +34,7 @@ services:
       - "3000:3000"
     volumes:
       - .:/home/node/app #dev volume
+      - ${MODEL_OUPUTS_DIR}:/home/node/app/model_outputs
     environment:
       - PG_HOST=tool_db
       - PG_PORT=5432
