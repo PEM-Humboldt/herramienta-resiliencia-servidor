@@ -2,6 +2,8 @@ const fs = require("fs/promises");
 
 const axios = require("axios");
 
+const logger = require("./utils/logger");
+
 const { GS_USER, GS_PASS } = process.env;
 const GS_URL = `http://${GS_USER}:${GS_PASS}@geoserver:8080/geoserver/rest`;
 
@@ -16,6 +18,7 @@ const create_workspace = async (name) => {
         },
       });
     } else {
+      logger.error(`geoserver: error creando workspace ${error}`);
       const err = new Error("Verificar estado del servicio de GeoServer");
       err.code = "INTERNAL_ERROR";
       throw err;
@@ -36,6 +39,7 @@ const create_datastore = async (shp, zip) => {
       headers: { "Content-Type": "application/zip" },
     });
   } catch (error) {
+    logger.error(`geoserver: error cargando capa ${error}`);
     const err = new Error("Verificar estado del servicio de GeoServer");
     err.code = "INTERNAL_ERROR";
     throw err;
