@@ -5,6 +5,7 @@ const {
   upload: upload_file,
   extract: extract_file,
   compress: compress_file,
+  clear_folder,
 } = require("./file_utils");
 const { create_workspace, create_datastore } = require("./geoserver");
 const { exec: exec_model } = require("./model");
@@ -86,5 +87,6 @@ app.get(
 app.use(error_handler);
 
 app.listen(port, () => {
+  clear_folder("uploads");
   logger.info(`Example app listening at http://localhost:${port}`);
 });
