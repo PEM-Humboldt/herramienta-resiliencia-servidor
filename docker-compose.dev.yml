@@ -5,7 +5,6 @@ services:
     container_name: tool_db
     ports:
       - "5432:5432"
-    restart: always
     environment:
       - POSTGRES_USER=${PG_USER}
       - POSTGRES_PASS=${PG_PASSWORD}
@@ -32,7 +31,6 @@ services:
     container_name: tool_server_dev
     ports:
       - "3000:3000"
-    restart: always
     volumes:
       - .:/home/node/app #dev volume
     environment:
@@ -43,6 +41,7 @@ services:
       - PG_PASSWORD=${PG_PASSWORD}
       - GS_USER=${GS_USER}
       - GS_PASS=${GS_PASS}
+      - MODEL_PASSWORD=${MODEL_PASSWORD}
     networks:
       - server_net
 
@@ -58,7 +57,6 @@ services:
       interval: 1m30s
       timeout: 10s
       retries: 3
-    restart: always
     environment:
       - GEOSERVER_ADMIN_USER=${GS_USER}
       - GEOSERVER_ADMIN_PASSWORD=${GS_PASS}

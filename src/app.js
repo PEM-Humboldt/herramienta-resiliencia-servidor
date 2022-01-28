@@ -7,9 +7,10 @@ const {
   compress: compress_file,
 } = require("./file_utils");
 const { create_workspace, create_datastore } = require("./geoserver");
+const model = require("./model");
 const upload_layer = require("./upload_layer");
 const error_handler = require("./utils/error_handler");
-const logger = require('./utils/logger');
+const logger = require("./utils/logger");
 
 const app = express();
 const port = 3000;
@@ -60,7 +61,7 @@ app.post(
       await upload_layer(shp_folder, shp_name, body.srid);
       res
         .status(200)
-        .send({ message: `Capa ${shp_name} cargada exitosamente` });
+        .send({ message: `Capa ${shp_name} cargada exitosamente.` });
     } catch (error) {
       const err = new Error(error);
       if (!err.code) err.code = "INTERNAL_ERROR";
@@ -68,6 +69,21 @@ app.post(
     }
   })
 );
+
+app.get("/exec", (req, res, next) => {
+  model()
+    .then(() =>
+      res
+        .status(200)
+        .send({ message: "Simulador ejecutado satisfactoriamente." })
+    )
+    .catch((error) => {
+      const err = new Error(error || "Ocurrió un error");
+      if (!err.code) err.code = "INTERNAL_ERROR";
+      throw err;
+    })
+    .catch(next);
+});
 
 app.use(error_handler);
 
