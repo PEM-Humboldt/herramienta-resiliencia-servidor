@@ -12,7 +12,7 @@ En el repositorio se encuentran los archivos `docker-compose.yml` y `docker-comp
 
 1. Configure las variables de ambiente necesarias para el funcionamiento de la herramienta (los valores aquí puestos son ejemplos y deben ser cambiados):
    ```sh
-   export PG_DATABASE=gis PG_USER=docker PG_PASSWORD=docker GS_USER=admin GS_PASS=geoserver GS_DATA_DIR='../geoserver_data'
+   export PG_DATABASE=gis PG_USER=docker PG_PASSWORD=docker GS_USER=admin GS_PASS=geoserver GS_DATA_DIR='../geoserver_data' MODEL_OUPUTS_DIR='../model_outputs' MODEL_PASSWORD='model_password'
    ```
 1. Ejecute docker-compose con el archivo principal:
    ```
@@ -25,7 +25,7 @@ Para el modo desarrollo ejecute el archivo de desarrollo en lugar del principal.
 
 1. Configure las variables de ambiente:
    ```sh
-   export PG_DATABASE=gis PG_USER=docker PG_PASSWORD=docker GS_USER=admin GS_PASS=geoserver GS_DATA_DIR='../geoserver_data'
+   export PG_DATABASE=gis PG_USER=docker PG_PASSWORD=docker GS_USER=admin GS_PASS=geoserver GS_DATA_DIR='../geoserver_data' MODEL_OUPUTS_DIR='../model_outputs' MODEL_PASSWORD='model_password'
    ```
 1. Ejecute docker-compose con el archivo de desarrollo:
    ```

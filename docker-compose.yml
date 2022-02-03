@@ -13,6 +13,19 @@ services:
     networks:
       - server_net
 
+  tool_simulator:
+    build:
+      context: https://github.com/PEM-Humboldt/herramienta-resiliencia-simulador.git#dockerSetup # TODO: CHANGE TO TAG URL
+      args:
+        userpassword: ${MODEL_PASSWORD}
+    image: tool_simulator
+    container_name: tool_simulator
+    volumes:
+      - ${MODEL_OUPUTS_DIR}:/home/model/app/outputs
+    restart: always
+    networks:
+      - server_net
+
   tool_server:
     build:
       context: .
@@ -21,6 +34,8 @@ services:
     container_name: tool_server
     ports:
       - "3000:3000"
+    volumes:
+      - ${MODEL_OUPUTS_DIR}:/home/node/app/model_outputs
     restart: always
     environment:
       - PG_HOST=tool_db
@@ -30,6 +45,7 @@ services:
       - PG_PASSWORD=${PG_PASSWORD}
       - GS_USER=${GS_USER}
       - GS_PASS=${GS_PASS}
+      - MODEL_PASSWORD=${MODEL_PASSWORD}
     networks:
       - server_net
 

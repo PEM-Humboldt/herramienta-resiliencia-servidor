@@ -5,11 +5,13 @@ const {
   upload: upload_file,
   extract: extract_file,
   compress: compress_file,
+  clear_folder,
 } = require("./file_utils");
 const { create_workspace, create_datastore } = require("./geoserver");
+const { exec: exec_model } = require("./model");
 const upload_layer = require("./upload_layer");
 const error_handler = require("./utils/error_handler");
-const logger = require('./utils/logger');
+const logger = require("./utils/logger");
 
 const app = express();
 const port = 3000;
@@ -23,7 +25,6 @@ app.get("/", (req, res) => {
 const wrapAsync = (fn) => {
   return (req, res, next) => {
     const fnReturn = fn(req, res, next);
-
     return Promise.resolve(fnReturn).catch(next);
   };
 };
@@ -31,7 +32,7 @@ const wrapAsync = (fn) => {
 app.post(
   "/upload",
   upload_file.single("layer"),
-  wrapAsync(async function ({ file, body }, res, next) {
+  wrapAsync(async ({ file, body }, res, next) => {
     logger.info("archivo recibido: ", file.filename, file.originalname, file);
     const fields = ["srid"];
     missing = fields.filter((field) => !(field in body));
@@ -60,9 +61,23 @@ app.post(
       await upload_layer(shp_folder, shp_name, body.srid);
       res
         .status(200)
-        .send({ message: `Capa ${shp_name} cargada exitosamente` });
+        .send({ message: `Capa ${shp_name} cargada exitosamente.` });
     } catch (error) {
       const err = new Error(error);
+      if (!err.code) err.code = "INTERNAL_ERROR";
+      throw err;
+    }
+  })
+);
+
+app.get(
+  "/exec",
+  wrapAsync(async (req, res, next) => {
+    try {
+      const result_file = await exec_model();
+      res.download(result_file);
+    } catch (error) {
+      const err = new Error(error || "Ocurrió un error");
       if (!err.code) err.code = "INTERNAL_ERROR";
       throw err;
     }
@@ -72,5 +87,6 @@ app.post(
 app.use(error_handler);
 
 app.listen(port, () => {
+  clear_folder("uploads");
   logger.info(`Example app listening at http://localhost:${port}`);
 });

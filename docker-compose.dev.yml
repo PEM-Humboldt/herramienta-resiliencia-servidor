@@ -5,11 +5,22 @@ services:
     container_name: tool_db
     ports:
       - "5432:5432"
-    restart: always
     environment:
       - POSTGRES_USER=${PG_USER}
       - POSTGRES_PASS=${PG_PASSWORD}
       - POSTGRES_DBNAME=${PG_DATABASE}
+    networks:
+      - server_net
+
+  tool_simulator:
+    build:
+      context: ../herramienta-resiliencia-simulador
+      args:
+        userpassword: ${MODEL_PASSWORD}
+    image: tool_simulator
+    container_name: tool_simulator
+    volumes:
+      - ${MODEL_OUPUTS_DIR}:/home/model/app/outputs
     networks:
       - server_net
 
@@ -21,9 +32,9 @@ services:
     container_name: tool_server_dev
     ports:
       - "3000:3000"
-    restart: always
     volumes:
       - .:/home/node/app #dev volume
+      - ${MODEL_OUPUTS_DIR}:/home/node/app/model_outputs
     environment:
       - PG_HOST=tool_db
       - PG_PORT=5432
@@ -32,6 +43,7 @@ services:
       - PG_PASSWORD=${PG_PASSWORD}
       - GS_USER=${GS_USER}
       - GS_PASS=${GS_PASS}
+      - MODEL_PASSWORD=${MODEL_PASSWORD}
     networks:
       - server_net
 
@@ -47,7 +59,6 @@ services:
       interval: 1m30s
       timeout: 10s
       retries: 3
-    restart: always
     environment:
       - GEOSERVER_ADMIN_USER=${GS_USER}
       - GEOSERVER_ADMIN_PASSWORD=${GS_PASS}
