@@ -50,7 +50,7 @@ services:
       - server_net
 
   geoserver:
-    image: kartoza/geoserver:2.18.0
+    image: kartoza/geoserver:2.20.2
     container_name: geoserver
     ports:
       - "8080:8080"
