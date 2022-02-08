@@ -4,7 +4,7 @@ const path = require("path");
 
 const multer = require("multer");
 
-const logger = require("./utils/logger");
+const logger = require("./logger");
 
 const extract = (filename) => {
   return new Promise((res, rej) => {

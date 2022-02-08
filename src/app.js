@@ -6,10 +6,10 @@ const {
   extract: extract_file,
   compress: compress_file,
   clear_folder,
-} = require("./file_utils");
-const { create_workspace, create_datastore } = require("./geoserver");
+} = require("./utils/file_utils");
+const { create_workspace, create_datastore } = require("./utils/geoserver");
 const { exec: exec_model } = require("./model");
-const upload_layer = require("./upload_layer");
+const { upload_layer, drop_geom } = require("./utils/database_utils");
 const error_handler = require("./utils/error_handler");
 const logger = require("./utils/logger");
 
@@ -34,7 +34,7 @@ app.post(
   upload_file.single("layer"),
   wrapAsync(async ({ file, body }, res, next) => {
     logger.info("archivo recibido: ", file.filename, file.originalname, file);
-    const fields = ["srid"];
+    const fields = ["srid", "module"];
     missing = fields.filter((field) => !(field in body));
     if (missing.length > 0) {
       const error = new Error("Hay campos faltantes");
@@ -53,12 +53,13 @@ app.post(
       const shp_folder = await extract_file(shp_name);
 
       // Load to Geoserver
-      const zip_path = await compress_file(shp_name, shp_folder);
-      await create_workspace(shp_name);
-      await create_datastore(shp_name, zip_path);
+      const zip_path = await compress_file(body.module, shp_folder);
+      await create_workspace(body.module);
+      await create_datastore(body.module, shp_name, zip_path);
 
       // Load to PostGIS
-      await upload_layer(shp_folder, shp_name, body.srid);
+      await upload_layer(shp_folder, body.module, body.srid);
+      await drop_geom(body.module);
       res
         .status(200)
         .send({ message: `Capa ${shp_name} cargada exitosamente.` });

@@ -2,7 +2,7 @@ const fs = require("fs/promises");
 
 const axios = require("axios");
 
-const logger = require("./utils/logger");
+const logger = require("./logger");
 
 const { GS_USER, GS_PASS } = process.env;
 const GS_URL = `http://${GS_USER}:${GS_PASS}@geoserver:8080/geoserver/rest`;
@@ -28,17 +28,18 @@ const create_workspace = async (name) => {
 
 const get_workspace = (name) => axios.get(`${GS_URL}/workspaces/${name}`);
 
-const create_datastore = async (shp, zip) => {
+const create_datastore = async (shp, shp_name, zip) => {
   try {
     const data = await fs.readFile(zip);
     await axios.request({
       url: `${GS_URL}/workspaces/${shp}/datastores/${shp}/file.shp`,
       method: "put",
-      params: { filename: `${shp}_gs.zip` },
+      params: { filename: `${shp_name}_gs.zip` },
       data,
       headers: { "Content-Type": "application/zip" },
     });
   } catch (error) {
+    console.log(error);
     logger.error(`geoserver: error cargando capa ${error}`);
     const err = new Error("Verificar estado del servicio de GeoServer");
     err.code = "INTERNAL_ERROR";

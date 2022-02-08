@@ -2,7 +2,7 @@ const path = require("path");
 
 const { NodeSSH } = require("node-ssh");
 
-const { clear_folder } = require("./file_utils");
+const { clear_folder } = require("./utils/file_utils");
 const logger = require("./utils/logger");
 
 const OUTPUTS_DIR = `model_outputs`;
