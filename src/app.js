@@ -47,6 +47,10 @@ app.post(
         "el campo 'layer' es requerido y tiene que ser un archivo .zip"
       );
     }
+    const modules_available = ["coberturas"];
+    if (!modules_available.includes(body.module)) {
+      throw new Error("Módulo no reconocido (parámetro module inválido)");
+    }
 
     try {
       const shp_name = file.filename.substring(0, file.filename.length - 4);
