@@ -8,16 +8,27 @@ const { GS_USER, GS_PASS } = process.env;
 const GS_URL = `http://${GS_USER}:${GS_PASS}@geoserver:8080/geoserver/rest`;
 
 const create_workspace = async (name) => {
+  let exists = false;
   try {
-    const existent = await get_workspace(name);
+    await get_workspace(name);
+    exists = true;
   } catch (error) {
-    if (error.response && error.response.status === 404) {
+    if (!error.response || error.response.status !== 404) {
+      logger.error(`geoserver: error consultando workspace ${error}`);
+      const err = new Error("Verificar estado del servicio de GeoServer");
+      err.code = "INTERNAL_ERROR";
+      throw err;
+    }
+  }
+
+  if (!exists) {
+    try {
       await axios.post(`${GS_URL}/workspaces`, {
         workspace: {
           name,
         },
       });
-    } else {
+    } catch (error) {
       logger.error(`geoserver: error creando workspace ${error}`);
       const err = new Error("Verificar estado del servicio de GeoServer");
       err.code = "INTERNAL_ERROR";

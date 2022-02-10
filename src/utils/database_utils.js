@@ -33,7 +33,7 @@ const upload_layer = async (folder, module, srid) => {
     });
 
     unzip.on("close", (code) => {
-      logger.info(`child process exited with code ${code}`);
+      logger.info(`Capa cargada. Código ${code}`);
       if (code === 0) {
         res();
       } else {
