@@ -4,7 +4,7 @@ const path = require("path");
 
 const multer = require("multer");
 
-const logger = require("./utils/logger");
+const logger = require("./logger");
 
 const extract = (filename) => {
   return new Promise((res, rej) => {
@@ -25,7 +25,7 @@ const extract = (filename) => {
     });
 
     unzip.on("close", (code) => {
-      logger.info(`child process exited with code ${code}`);
+      logger.info(`Extracción finalizada. Código ${code}`);
       if (code === 0) {
         res(`${process.cwd()}/uploads/${filename}`);
       } else {
@@ -53,7 +53,7 @@ const compress = (filename, folder_path) => {
     });
 
     zip.on("close", (code) => {
-      logger.info(`child process exited with code ${code}`);
+      logger.info(`Archivo para el geoserver preparado. Código ${code}`);
       if (code === 0) {
         res(`${process.cwd()}/uploads/${filename}_gs.zip`);
       } else {
