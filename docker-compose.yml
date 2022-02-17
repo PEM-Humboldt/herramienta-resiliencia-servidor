@@ -15,7 +15,7 @@ services:
 
   tool_simulator:
     build:
-      context: https://github.com/PEM-Humboldt/herramienta-resiliencia-simulador.git#dockerSetup # TODO: CHANGE TO TAG URL
+      context: https://github.com/PEM-Humboldt/herramienta-resiliencia-simulador.git#prototipo
       args:
         userpassword: ${MODEL_PASSWORD}
     image: tool_simulator
