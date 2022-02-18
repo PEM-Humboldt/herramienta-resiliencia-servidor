@@ -12,6 +12,7 @@ const create_workspace = async (name) => {
   try {
     await get_workspace(name);
     exists = true;
+    logger.info("geoserver: workspace ya existe");
   } catch (error) {
     if (!error.response || error.response.status !== 404) {
       logger.error(`geoserver: error consultando workspace ${error}`);
@@ -28,6 +29,7 @@ const create_workspace = async (name) => {
           name,
         },
       });
+      logger.info("geoserver: workspace creado correctamente");
     } catch (error) {
       logger.error(`geoserver: error creando workspace ${error}`);
       const err = new Error("Verificar estado del servicio de GeoServer");
@@ -47,6 +49,7 @@ const create_datastore = async (shp, shp_name, zip) => {
       method: "put",
       params: { filename: `${shp_name}_gs.zip` },
       data,
+      maxBodyLength: Infinity,
       headers: { "Content-Type": "application/zip" },
     });
   } catch (error) {
