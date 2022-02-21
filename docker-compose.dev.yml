@@ -14,7 +14,7 @@ services:
 
   tool_simulator:
     build:
-      context: ../herramienta-resiliencia-simulador
+      context: ../herramienta-resiliencia-simulador #local clone of the model repo
       args:
         userpassword: ${MODEL_PASSWORD}
     image: tool_simulator
