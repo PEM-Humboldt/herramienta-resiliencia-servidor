@@ -29,8 +29,9 @@ El nombre sugerido para la carpeta a asociar a la variable GS_DATA_DIR es 'geose
 
 ## Modo desarrollo
 
-Para el modo desarrollo ejecute el archivo de desarrollo en lugar del principal.
+Para el modo desarrollo, siga los siguientes pasos:
 
+1. Descargue el [código del simulador](https://github.com/PEM-Humboldt/herramienta-resiliencia-simulador) en la misma ruta donde almacenó el [código del servidor](https://github.com/PEM-Humboldt/herramienta-resiliencia-servidor)
 1. Configure las variables de ambiente:
    ```sh
    export PG_DATABASE=gis PG_USER=docker PG_PASSWORD=docker GS_USER=admin GS_PASS=geoserver GS_DATA_DIR='../geoserver_data' MODEL_OUPUTS_DIR='../model_outputs' MODEL_PASSWORD='model_password'
