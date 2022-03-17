@@ -30,7 +30,7 @@ const wrapAsync = (fn) => {
 };
 
 app.post(
-  "/upload",
+  "/upload/layer",
   upload_file.single("layer"),
   wrapAsync(async ({ file, body }, res, next) => {
     logger.info("archivo recibido: ", file.filename, file.originalname, file);
