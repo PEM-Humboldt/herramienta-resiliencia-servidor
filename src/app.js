@@ -47,7 +47,7 @@ app.post(
         "el campo 'layer' es requerido y tiene que ser un archivo .zip"
       );
     }
-    const modules_available = ["coberturas"];
+    const modules_available = ["coberturas", "habitat"];
     if (!modules_available.includes(body.module)) {
       throw new Error("Módulo no reconocido (parámetro module inválido)");
     }
