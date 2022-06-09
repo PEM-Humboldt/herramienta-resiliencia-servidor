@@ -42,7 +42,7 @@ const exec = async () => {
             logger.info(
               `Simulación finalizada. Código: ${result.code} - stdout: ${result.stdout}`
             );
-            res(path.join(process.cwd(), OUTPUTS_DIR, "cover_time_series.csv"));
+            res(path.join(process.cwd(), OUTPUTS_DIR, "model_time_series.csv"));
           })
           .catch((err) => {
             logger.error(`Simulación - error: ${err}`);
