@@ -68,19 +68,37 @@ const compress = (filename, folder_path) => {
 const storage = multer.diskStorage({
   destination: `${process.cwd()}/uploads/`,
   filename: function (req, file, cb) {
-    const name = file.originalname.substring(0, file.originalname.length - 4);
-    cb(null, `${name.replace(/[^\w-]/gi, "")}.zip`);
+    if (file.fieldname === "layer") {
+      const name = file.originalname.substring(0, file.originalname.length - 4);
+      cb(null, `${name.replace(/[^\w-]/gi, "")}.zip`);
+    } else if (file.fieldname === "parameters") {
+      cb(null, "parameters.xlsx");
+    }
   },
 });
 
 const filter = (req, file, cb) => {
-  if (file.mimetype !== "application/zip") {
-    const err = new Error("Only .zip files are supported");
-    err.desc = `File sent: ${file.originalname}`;
-    cb(err);
-  } else {
-    cb(null, true);
+  const conds = [
+    file.fieldname === "layer" && file.mimetype !== "application/zip",
+    file.fieldname === "parameters" &&
+      file.mimetype !==
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  ];
+  const errors = [
+    new Error("Sólo se aceptan archivos .zip"),
+    new Error("Sólo se aceptan archivos .xlsx"),
+  ];
+  for (const idx in conds) {
+    if (conds.hasOwnProperty(idx)) {
+      if (conds[idx] === true) {
+        const err = errors[idx];
+        err.desc = `Archivo recibido: ${file.originalname}`;
+        cb(err);
+        return;
+      }
+    }
   }
+  cb(null, true);
 };
 
 const clear_folder = async (folder_name) => {

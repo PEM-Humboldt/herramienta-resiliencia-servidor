@@ -29,11 +29,16 @@ const wrapAsync = (fn) => {
   };
 };
 
+/*
+ * In all /upload/* endpoints is important that filedname for the file to be the
+ * same as the second part of the path so the error hadler deliver correct messages
+ */
+
 app.post(
   "/upload/layer",
   upload_file.single("layer"),
   wrapAsync(async ({ file, body }, res, next) => {
-    logger.info("archivo recibido: ", file.filename, file.originalname, file);
+    logger.info(`archivo recibido para carga de capa: ${JSON.stringify(file)}`);
     const fields = ["srid", "module"];
     missing = fields.filter((field) => !(field in body));
     if (missing.length > 0) {

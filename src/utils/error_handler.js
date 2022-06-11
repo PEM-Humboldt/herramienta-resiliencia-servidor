@@ -3,9 +3,10 @@ const logger = require("./logger");
 module.exports = function (err, req, res, next) {
   switch (err.code) {
     case "LIMIT_UNEXPECTED_FILE":
+      const path = req.url.substring(req.url.lastIndexOf("/") + 1);
       logger.error(`${err.message}: ${err.field}`);
       res.status(400).send({
-        error: `El cmapo para el archivo es 'layer'. Usted envió: ${err.field}`,
+        error: `El campo para el archivo es '${path}'. Usted envió: ${err.field}`,
       });
       break;
     case "MISSING_FORM_FIELDS":
