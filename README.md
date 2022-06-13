@@ -41,6 +41,10 @@ Para el modo desarrollo, siga los siguientes pasos:
    docker-compose -f docker-compose.dev.yml up -d
    ```
 
+## Probar endpoints
+
+En la raíz de este repositorio se encuentra el archivo [test_endpoints.json](test_endpoints.json) el cual puede importar en [Insomnia](https://insomnia.rest/download) para probar los endpoints.
+
 ## Autores
 
 - **Erika Suárez Valencia** - [erikasv](https://github.com/erikasv)
