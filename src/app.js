@@ -8,7 +8,7 @@ const {
   clear_folder,
 } = require("./utils/file_utils");
 const { create_workspace, create_datastore } = require("./utils/geoserver");
-const { exec: exec_model } = require("./model");
+const { exec_model, upload_params } = require("./model");
 const { upload_layer, drop_geom } = require("./utils/database_utils");
 const error_handler = require("./utils/error_handler");
 const logger = require("./utils/logger");
@@ -72,6 +72,26 @@ app.post(
       res
         .status(200)
         .send({ message: `Capa ${shp_name} cargada exitosamente.` });
+    } catch (error) {
+      const err = new Error(error);
+      if (!err.code) err.code = "INTERNAL_ERROR";
+      throw err;
+    }
+  })
+);
+
+app.post(
+  "/upload/parameters",
+  upload_file.single("parameters"),
+  wrapAsync(async ({ file, body }, res, next) => {
+    logger.info(
+      `archivo recibido para carga de parametros del modelo: ${JSON.stringify(
+        file
+      )}`
+    );
+    try {
+      await upload_params(file.destination, file.filename);
+      res.status(200).send({ message: "Parámetros cargados exitosamente." });
     } catch (error) {
       const err = new Error(error);
       if (!err.code) err.code = "INTERNAL_ERROR";

@@ -46,6 +46,7 @@ services:
       - GS_USER=${GS_USER}
       - GS_PASS=${GS_PASS}
       - MODEL_PASSWORD=${MODEL_PASSWORD}
+      - MODEL_PARAMS_PATH=/home/model/app/condiciones_iniciales/
     networks:
       - server_net
 

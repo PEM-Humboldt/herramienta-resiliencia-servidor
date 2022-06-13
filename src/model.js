@@ -7,7 +7,7 @@ const logger = require("./utils/logger");
 
 const OUTPUTS_DIR = `model_outputs`;
 
-const exec = async () => {
+const exec_model = async () => {
   const {
     PG_HOST,
     PG_PORT,
@@ -52,4 +52,33 @@ const exec = async () => {
   });
 };
 
-module.exports = { exec };
+const upload_params = async (local_path, filename) => {
+  const { MODEL_PASSWORD, MODEL_PARAMS_PATH } = process.env;
+
+  return new Promise((res, rej) => {
+    const ssh = new NodeSSH();
+    ssh
+      .connect({
+        host: "tool_simulator",
+        username: "model",
+        password: MODEL_PASSWORD,
+      })
+      .then(() => {
+        ssh
+          .putFile(
+            `${local_path}/${filename}`,
+            `${MODEL_PARAMS_PATH}/${filename}`
+          )
+          .then((result) => {
+            logger.info("Archivo copiado exitosamente");
+            res("ok");
+          })
+          .catch((err) => {
+            logger.error(`Error copiando archivo de parámetros: ${err}`);
+            throw Error("Error copiando archivo de parámetros.");
+          });
+      });
+  });
+};
+
+module.exports = { exec_model, upload_params };
