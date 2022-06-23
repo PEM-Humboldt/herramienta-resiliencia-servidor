@@ -15,7 +15,7 @@ services:
 
   tool_simulator:
     build:
-      context: https://github.com/PEM-Humboldt/herramienta-resiliencia-simulador.git#prototipo
+      context: https://github.com/PEM-Humboldt/herramienta-resiliencia-simulador.git#main
       args:
         userpassword: ${MODEL_PASSWORD}
     image: tool_simulator
