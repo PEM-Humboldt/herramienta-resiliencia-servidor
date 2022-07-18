@@ -83,7 +83,7 @@ app.post(
 app.post(
   "/upload/parameters",
   upload_file.single("parameters"),
-  wrapAsync(async ({ file, body }, res, next) => {
+  wrapAsync(async ({ file }, res, next) => {
     logger.info(
       `archivo recibido para carga de parametros del modelo: ${JSON.stringify(
         file
@@ -102,9 +102,11 @@ app.post(
 
 app.get(
   "/exec",
-  wrapAsync(async (req, res, next) => {
+  wrapAsync(async ({ query }, res, next) => {
     try {
-      const result_file = await exec_model();
+      const result_file = await exec_model(
+        query.result_name?.replace(/\s+/g, " ").trim()
+      );
       res.download(result_file);
     } catch (error) {
       const err = new Error(error || "Ocurrió un error");
