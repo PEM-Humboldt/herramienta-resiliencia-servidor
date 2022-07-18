@@ -1,1 +1,189 @@
-{ "_type": "export", "__export_format": 4, "__export_date": "2022-06-13T21:32:17.588Z", "__export_source": "insomnia.desktop.app:v2022.2.1", "resources": [ { "_id": "req_c27715738c1c4f2fbb5554945f5e54f4", "parentId": "fld_783603b8ff6542e38a511be790e1fb59", "modified": 1654902785476, "created": 1635544892433, "url": "{{host}}/upload/layer", "name": "upload/layer", "description": "", "method": "POST", "body": { "mimeType": "multipart/form-data", "params": [ { "name": "layer", "value": "", "description": "", "id": "pair_97af986db6af4a4b9ea27f0e82952916", "type": "file", "fileName": "/home/esuarez/ecopetrol/capas/Tillava_201_c.zip" }, { "name": "srid", "value": "4686", "description": "", "id": "pair_b309f219ad024ba8b55010eb5862a55a" }, { "id": "pair_53c07aeaa41f49b38a849b270e6e402b", "name": "module", "value": "habitat", "description": "", "disabled": false } ] }, "parameters": [], "headers": [ { "name": "Content-Type", "value": "multipart/form-data", "id": "pair_9e792af774c044209e80628ce45e1fba" } ], "authentication": {}, "metaSortKey": -1635544892433, "isPrivate": false, "settingStoreCookies": true, "settingSendCookies": true, "settingDisableRenderRequestBody": false, "settingEncodeUrl": true, "settingRebuildPath": true, "settingFollowRedirects": "global", "_type": "request" }, { "_id": "fld_783603b8ff6542e38a511be790e1fb59", "parentId": "wrk_20fe5adab80a47b6a85b8ce41051642d", "modified": 1635518226895, "created": 1635518226895, "name": "server", "description": "", "environment": {}, "environmentPropertyOrder": null, "metaSortKey": -1635518226895, "_type": "request_group" }, { "_id": "wrk_20fe5adab80a47b6a85b8ce41051642d", "parentId": null, "modified": 1629728786419, "created": 1629728786419, "name": "Ecopetrol", "description": "", "scope": "collection", "_type": "workspace" }, { "_id": "req_ae56f1610fc145c19968d681be60032c", "parentId": "fld_783603b8ff6542e38a511be790e1fb59", "modified": 1654905603633, "created": 1654900589644, "url": "{{host}}/upload/parameters", "name": "upload/parameters", "description": "", "method": "POST", "body": { "mimeType": "multipart/form-data", "params": [ { "name": "parameters", "value": "", "description": "", "id": "pair_97af986db6af4a4b9ea27f0e82952916", "type": "file", "fileName": "/home/esuarez/ecopetrol/try1.xlsx" } ] }, "parameters": [], "headers": [ { "name": "Content-Type", "value": "multipart/form-data", "id": "pair_9e792af774c044209e80628ce45e1fba" } ], "authentication": {}, "metaSortKey": -1635538420935.25, "isPrivate": false, "settingStoreCookies": true, "settingSendCookies": true, "settingDisableRenderRequestBody": false, "settingEncodeUrl": true, "settingRebuildPath": true, "settingFollowRedirects": "global", "_type": "request" }, { "_id": "req_21701ada1b0c48b4953757489567d96e", "parentId": "fld_783603b8ff6542e38a511be790e1fb59", "modified": 1643328035278, "created": 1643328029461, "url": "{{host}}/exec", "name": "exec", "description": "", "method": "GET", "body": {}, "parameters": [], "headers": [], "authentication": {}, "metaSortKey": -1635531949437.5, "isPrivate": false, "settingStoreCookies": true, "settingSendCookies": true, "settingDisableRenderRequestBody": false, "settingEncodeUrl": true, "settingRebuildPath": true, "settingFollowRedirects": "global", "_type": "request" }, { "_id": "env_b82908c9f4539b580e2669746ae1f2bfdf818131", "parentId": "wrk_20fe5adab80a47b6a85b8ce41051642d", "modified": 1655155915707, "created": 1629728786557, "name": "Base Environment", "data": {}, "dataPropertyOrder": {}, "color": null, "isPrivate": false, "metaSortKey": 1629728786557, "_type": "environment" }, { "_id": "jar_b82908c9f4539b580e2669746ae1f2bfdf818131", "parentId": "wrk_20fe5adab80a47b6a85b8ce41051642d", "modified": 1629728786558, "created": 1629728786558, "name": "Default Jar", "cookies": [], "_type": "cookie_jar" }, { "_id": "spc_cee8e29c6d7944a8ad91155060424a51", "parentId": "wrk_20fe5adab80a47b6a85b8ce41051642d", "modified": 1629728786430, "created": 1629728786430, "fileName": "Ecopetrol", "contents": "", "contentType": "yaml", "_type": "api_spec" }, { "_id": "env_af44c473f40e48598135b6fa86cec4d3", "parentId": "env_b82908c9f4539b580e2669746ae1f2bfdf818131", "modified": 1657816047434, "created": 1645647669967, "name": "aws-dev", "data": { "host": "http://3.238.127.200:3000" }, "dataPropertyOrder": { "&": ["host"] }, "color": null, "isPrivate": false, "metaSortKey": 2, "_type": "environment" } ] }
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2022-07-18T23:22:05.757Z",
+  "__export_source": "insomnia.desktop.app:v2022.2.1",
+  "resources": [
+    {
+      "_id": "req_c27715738c1c4f2fbb5554945f5e54f4",
+      "parentId": "fld_783603b8ff6542e38a511be790e1fb59",
+      "modified": 1658182287820,
+      "created": 1635544892433,
+      "url": "{{host}}/upload/layer",
+      "name": "upload/layer",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          {
+            "name": "layer",
+            "value": "",
+            "description": "",
+            "id": "pair_97af986db6af4a4b9ea27f0e82952916",
+            "type": "file",
+            "fileName": "/home/esuarez/ecopetrol/capas/Tillava_201_c.zip"
+          },
+          {
+            "name": "srid",
+            "value": "4686",
+            "description": "",
+            "id": "pair_b309f219ad024ba8b55010eb5862a55a"
+          },
+          {
+            "id": "pair_53c07aeaa41f49b38a849b270e6e402b",
+            "name": "module",
+            "value": "coberturas",
+            "description": "",
+            "disabled": false
+          }
+        ]
+      },
+      "parameters": [],
+      "headers": [{ "name": "Content-Type", "value": "multipart/form-data" }],
+      "authentication": {},
+      "metaSortKey": -1635544892433,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_783603b8ff6542e38a511be790e1fb59",
+      "parentId": "wrk_20fe5adab80a47b6a85b8ce41051642d",
+      "modified": 1635518226895,
+      "created": 1635518226895,
+      "name": "server",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1635518226895,
+      "_type": "request_group"
+    },
+    {
+      "_id": "wrk_20fe5adab80a47b6a85b8ce41051642d",
+      "parentId": null,
+      "modified": 1629728786419,
+      "created": 1629728786419,
+      "name": "Ecopetrol",
+      "description": "",
+      "scope": "collection",
+      "_type": "workspace"
+    },
+    {
+      "_id": "req_ae56f1610fc145c19968d681be60032c",
+      "parentId": "fld_783603b8ff6542e38a511be790e1fb59",
+      "modified": 1658182285348,
+      "created": 1654900589644,
+      "url": "{{host}}/upload/parameters",
+      "name": "upload/parameters",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          {
+            "name": "parameters",
+            "value": "",
+            "description": "",
+            "id": "pair_97af986db6af4a4b9ea27f0e82952916",
+            "type": "file",
+            "fileName": "/home/esuarez/ecopetrol/try1.xlsx"
+          }
+        ]
+      },
+      "parameters": [],
+      "headers": [{ "name": "Content-Type", "value": "multipart/form-data" }],
+      "authentication": {},
+      "metaSortKey": -1635538420935.25,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_21701ada1b0c48b4953757489567d96e",
+      "parentId": "fld_783603b8ff6542e38a511be790e1fb59",
+      "modified": 1658186002190,
+      "created": 1643328029461,
+      "url": "{{host}}/exec",
+      "name": "exec",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "id": "pair_fa31ee83627544ca81e6b69890258c4e",
+          "name": "result_name",
+          "value": "pruebita.csv",
+          "description": "",
+          "disabled": false
+        }
+      ],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1635531949437.5,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "env_b82908c9f4539b580e2669746ae1f2bfdf818131",
+      "parentId": "wrk_20fe5adab80a47b6a85b8ce41051642d",
+      "modified": 1655155915707,
+      "created": 1629728786557,
+      "name": "Base Environment",
+      "data": {},
+      "dataPropertyOrder": {},
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1629728786557,
+      "_type": "environment"
+    },
+    {
+      "_id": "jar_b82908c9f4539b580e2669746ae1f2bfdf818131",
+      "parentId": "wrk_20fe5adab80a47b6a85b8ce41051642d",
+      "modified": 1629728786558,
+      "created": 1629728786558,
+      "name": "Default Jar",
+      "cookies": [],
+      "_type": "cookie_jar"
+    },
+    {
+      "_id": "spc_cee8e29c6d7944a8ad91155060424a51",
+      "parentId": "wrk_20fe5adab80a47b6a85b8ce41051642d",
+      "modified": 1629728786430,
+      "created": 1629728786430,
+      "fileName": "Ecopetrol",
+      "contents": "",
+      "contentType": "yaml",
+      "_type": "api_spec"
+    },
+    {
+      "_id": "env_af44c473f40e48598135b6fa86cec4d3",
+      "parentId": "env_b82908c9f4539b580e2669746ae1f2bfdf818131",
+      "modified": 1657816047434,
+      "created": 1645647669967,
+      "name": "aws-dev",
+      "data": { "host": "http://3.238.127.200:3000" },
+      "dataPropertyOrder": { "&": ["host"] },
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 2,
+      "_type": "environment"
+    }
+  ]
+}
