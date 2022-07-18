@@ -100,6 +100,21 @@ app.post(
   })
 );
 
+/**
+ * @apiGroup Server
+ * @api {get} /exec exec
+ * @apiName ExecSimulator
+ * @apiVersion 1.0.0
+ * @apiDescription
+ * Exec the simulator with the previously loaded layers and parameters.
+ *
+ * @apiQuery {String} result_name name for the simulator results file
+ *
+ * @apiSuccess {File} Result csv file to be downloaded
+ *
+ * @apiExample {curl} Example usage:
+ * /exec?result_name=escenario1.csv
+ */
 app.get(
   "/exec",
   wrapAsync(async ({ query }, res, next) => {

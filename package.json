@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon --watch src src/app.js",
-    "start": "node src/app.js"
+    "start": "node src/app.js",
+    "docs": "apidoc -i src/ -o docs/"
   },
   "author": "",
   "license": "MIT",
@@ -20,7 +21,12 @@
     "winston-daily-rotate-file": "^4.5.5"
   },
   "devDependencies": {
+    "apidoc": "^0.52.0",
     "nodemon": "^2.0.14",
     "prettier": "^2.5.1"
+  },
+  "apidoc": {
+    "name": "Herramienta resiliencia - servidor",
+    "version": "1.0.0"
   }
 }
