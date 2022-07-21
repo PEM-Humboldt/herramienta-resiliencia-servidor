@@ -1,6 +1,7 @@
 logs/
 node_modules/
 uploads/
+docs/
 
 notes.txt
 .vscode

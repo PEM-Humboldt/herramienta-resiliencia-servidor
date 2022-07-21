@@ -45,6 +45,10 @@ Para el modo desarrollo, siga los siguientes pasos:
 
 En la raíz de este repositorio se encuentra el archivo [test_endpoints.json](test_endpoints.json) el cual puede importar en [Insomnia](https://insomnia.rest/download) para probar los endpoints.
 
+## Generar documentación de los endpoints
+
+Ejecute `npm run docs` en la raíz del proyecto para generar la documentación de los endpoints, esta es almacenada en la carpeta `docs`. Para visualizarla abra en un navegador el archivo `docs/index.html`.
+
 ## Autores
 
 - **Erika Suárez Valencia** - [erikasv](https://github.com/erikasv)

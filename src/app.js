@@ -83,7 +83,7 @@ app.post(
 app.post(
   "/upload/parameters",
   upload_file.single("parameters"),
-  wrapAsync(async ({ file, body }, res, next) => {
+  wrapAsync(async ({ file }, res, next) => {
     logger.info(
       `archivo recibido para carga de parametros del modelo: ${JSON.stringify(
         file
@@ -100,11 +100,28 @@ app.post(
   })
 );
 
+/**
+ * @apiGroup Server
+ * @api {get} /exec exec
+ * @apiName ExecSimulator
+ * @apiVersion 1.0.0
+ * @apiDescription
+ * Exec the simulator with the previously loaded layers and parameters.
+ *
+ * @apiQuery {String} result_name name for the simulator results file
+ *
+ * @apiSuccess {File} Result csv file to be downloaded
+ *
+ * @apiExample {curl} Example usage:
+ * /exec?result_name=escenario1.csv
+ */
 app.get(
   "/exec",
-  wrapAsync(async (req, res, next) => {
+  wrapAsync(async ({ query }, res, next) => {
     try {
-      const result_file = await exec_model();
+      const result_file = await exec_model(
+        query.result_name?.replace(/\s+/g, " ").trim()
+      );
       res.download(result_file);
     } catch (error) {
       const err = new Error(error || "Ocurrió un error");

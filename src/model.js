@@ -7,7 +7,7 @@ const logger = require("./utils/logger");
 
 const OUTPUTS_DIR = `model_outputs`;
 
-const exec_model = async () => {
+const exec_model = async (resultName = "model_time_series.csv") => {
   const {
     PG_HOST,
     PG_PORT,
@@ -29,7 +29,7 @@ const exec_model = async () => {
       .then(() => {
         ssh
           .execCommand(
-            `POSTGRES_ADDRESS=${PG_HOST} POSTGRES_PORT=${PG_PORT} POSTGRES_USERNAME=${PG_USER} POSTGRES_PASSWORD=${PG_PASSWORD} POSTGRES_DBNAME=${PG_DATABASE} python3 run_principal.py`,
+            `POSTGRES_ADDRESS=${PG_HOST} POSTGRES_PORT=${PG_PORT} POSTGRES_USERNAME=${PG_USER} POSTGRES_PASSWORD=${PG_PASSWORD} POSTGRES_DBNAME=${PG_DATABASE} python3 run_principal.py -o ${resultName}`,
             { cwd: "/home/model/app" }
           )
           .then((result) => {
@@ -42,7 +42,7 @@ const exec_model = async () => {
             logger.info(
               `Simulación finalizada. Código: ${result.code} - stdout: ${result.stdout}`
             );
-            res(path.join(process.cwd(), OUTPUTS_DIR, "model_time_series.csv"));
+            res(path.join(process.cwd(), OUTPUTS_DIR, resultName));
           })
           .catch((err) => {
             logger.error(`Simulación - error: ${err}`);
