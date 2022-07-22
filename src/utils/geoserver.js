@@ -53,7 +53,6 @@ const create_datastore = async (shp, shp_name, zip) => {
       headers: { "Content-Type": "application/zip" },
     });
   } catch (error) {
-    console.log(error);
     logger.error(`geoserver: error cargando capa ${error}`);
     const err = new Error("Verificar estado del servicio de GeoServer");
     err.code = "INTERNAL_ERROR";

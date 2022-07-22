@@ -1,5 +1,5 @@
 const { spawn } = require("child_process");
-const { readdir, rm } = require("fs/promises");
+const { readdir, rm, unlink, open } = require("fs/promises");
 const path = require("path");
 
 const multer = require("multer");
@@ -115,9 +115,24 @@ const clear_folder = async (folder_name) => {
   }
 };
 
+const clear_output = async (folder_name, file_name) => {
+  const folder_path = path.join(process.cwd(), folder_name);
+  try {
+    const files = await readdir(folder_path);
+    files.forEach((file) => {
+      if(file==file_name) rm(path.join(folder_path, file), { recursive: true });
+    });
+  } catch (error) {
+    const err = new Error(`Ocurrió un error: ${error}`);
+    err.code = "INTERNAL_ERROR";
+    throw err;
+  }
+};
+
 module.exports = {
   upload: multer({ storage, fileFilter: filter }),
   extract,
   compress,
   clear_folder,
+  clear_output
 };

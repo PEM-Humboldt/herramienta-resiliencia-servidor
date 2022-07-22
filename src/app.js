@@ -39,7 +39,7 @@ app.post(
   upload_file.single("layer"),
   wrapAsync(async ({ file, body }, res, next) => {
     logger.info(`archivo recibido para carga de capa: ${JSON.stringify(file)}`);
-    const fields = ["srid", "module"];
+    const fields = ["srid", "module","workspace"];
     missing = fields.filter((field) => !(field in body));
     if (missing.length > 0) {
       const error = new Error("Hay campos faltantes");
@@ -60,18 +60,19 @@ app.post(
     try {
       const shp_name = file.filename.substring(0, file.filename.length - 4);
       const shp_folder = await extract_file(shp_name);
+      let workspaceName = `${body.workspace}_${body.module}`;
 
       // Load to Geoserver
-      const zip_path = await compress_file(body.module, shp_folder);
-      await create_workspace(body.module);
-      await create_datastore(body.module, shp_name, zip_path);
+      const zip_path = await compress_file(workspaceName, shp_folder);
+      await create_workspace(workspaceName);
+      await create_datastore(workspaceName, shp_name, zip_path);
 
       // Load to PostGIS
-      await upload_layer(shp_folder, body.module, body.srid);
-      await drop_geom(body.module);
+      await upload_layer(shp_folder, workspaceName, body.srid);
+      await drop_geom(workspaceName);
       res
         .status(200)
-        .send({ message: `Capa ${shp_name} cargada exitosamente.` });
+        .send({ message: `Capa ${shp_name} cargada exitosamente para el workspace ${body.workspace}.` });
     } catch (error) {
       const err = new Error(error);
       if (!err.code) err.code = "INTERNAL_ERROR";
@@ -83,14 +84,22 @@ app.post(
 app.post(
   "/upload/parameters",
   upload_file.single("parameters"),
-  wrapAsync(async ({ file }, res, next) => {
+  wrapAsync(async ({ file, body }, res, next) => {
     logger.info(
       `archivo recibido para carga de parametros del modelo: ${JSON.stringify(
         file
       )}`
     );
+    const fields = ["workspace"];
+    missing = fields.filter((field) => !(field in body));
+    if (missing.length > 0) {
+      const error = new Error("Hay campos faltantes");
+      error.code = "MISSING_FORM_FIELDS";
+      error.fields = missing.join(", ");
+      throw error;
+    }
     try {
-      await upload_params(file.destination, file.filename);
+      await upload_params(file, body);
       res.status(200).send({ message: "Parámetros cargados exitosamente." });
     } catch (error) {
       const err = new Error(error);
@@ -118,9 +127,20 @@ app.post(
 app.get(
   "/exec",
   wrapAsync(async ({ query }, res, next) => {
+    let outputName = query.result_name?.replace(/\s+/g, " ").trim();
+    const fields = ["workspace"];
+
+    missing = fields.filter((field) => !(field in query));
+    if (missing.length > 0) {
+      const error = new Error("Hay campos faltantes");
+      error.code = "MISSING_FORM_FIELDS";
+      error.fields = missing.join(", ");
+      throw error;
+    }
     try {
       const result_file = await exec_model(
-        query.result_name?.replace(/\s+/g, " ").trim()
+        query.workspace,
+        outputName
       );
       res.download(result_file);
     } catch (error) {
