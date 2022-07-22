@@ -1,5 +1,5 @@
 const { spawn } = require("child_process");
-const { readdir, rm, unlink, open } = require("fs/promises");
+const { readdir, rm } = require("fs/promises");
 const path = require("path");
 
 const multer = require("multer");
@@ -116,12 +116,9 @@ const clear_folder = async (folder_name) => {
 };
 
 const clear_output = async (folder_name, file_name) => {
-  const folder_path = path.join(process.cwd(), folder_name);
+  const file_path = path.join(process.cwd(), folder_name, file_name);
   try {
-    const files = await readdir(folder_path);
-    files.forEach((file) => {
-      if(file==file_name) rm(path.join(folder_path, file), { recursive: true });
-    });
+    rm(file_path, { force: true });
   } catch (error) {
     const err = new Error(`Ocurrió un error: ${error}`);
     err.code = "INTERNAL_ERROR";

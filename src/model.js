@@ -8,7 +8,7 @@ const logger = require("./utils/logger");
 const OUTPUTS_DIR = `model_outputs`;
 
 const exec_model = async (workspace, resultName = "model_time_series.csv") => {
-  let filename = `${workspace}_${resultName}`;
+  const filename = `${workspace}_${resultName}`;
   const {
     PG_HOST,
     PG_PORT,
@@ -53,7 +53,7 @@ const exec_model = async (workspace, resultName = "model_time_series.csv") => {
   });
 };
 
-const upload_params = async (file, body) => {
+const upload_params = async (file, workspace) => {
   const { MODEL_PASSWORD, MODEL_PARAMS_PATH } = process.env;
 
   return new Promise((res, rej) => {
@@ -68,7 +68,7 @@ const upload_params = async (file, body) => {
         ssh
           .putFile(
             `${file.destination}/${file.filename}`,
-            `${MODEL_PARAMS_PATH}/${body.workspace}_${file.filename}`
+            `${MODEL_PARAMS_PATH}/${workspace}_${file.filename}`
           )
           .then((result) => {
             logger.info("Archivo copiado exitosamente");

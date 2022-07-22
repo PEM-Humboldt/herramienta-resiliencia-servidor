@@ -60,7 +60,8 @@ app.post(
     try {
       const shp_name = file.filename.substring(0, file.filename.length - 4);
       const shp_folder = await extract_file(shp_name);
-      let workspaceName = `${body.workspace}_${body.module}`;
+      const workspace = body.workspace?.replace(/\s+/g, " ").trim();
+      const workspaceName = `${workspace}_${body.module}`;
 
       // Load to Geoserver
       const zip_path = await compress_file(workspaceName, shp_folder);
@@ -99,7 +100,7 @@ app.post(
       throw error;
     }
     try {
-      await upload_params(file, body);
+      await upload_params(file, body.workspace);
       res.status(200).send({ message: "Parámetros cargados exitosamente." });
     } catch (error) {
       const err = new Error(error);
