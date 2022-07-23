@@ -115,9 +115,21 @@ const clear_folder = async (folder_name) => {
   }
 };
 
+const clear_output = async (folder_name, file_name) => {
+  const file_path = path.join(process.cwd(), folder_name, file_name);
+  try {
+    rm(file_path, { force: true });
+  } catch (error) {
+    const err = new Error(`Ocurrió un error: ${error}`);
+    err.code = "INTERNAL_ERROR";
+    throw err;
+  }
+};
+
 module.exports = {
   upload: multer({ storage, fileFilter: filter }),
   extract,
   compress,
   clear_folder,
+  clear_output
 };

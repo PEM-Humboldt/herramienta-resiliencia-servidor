@@ -2,12 +2,13 @@ const path = require("path");
 
 const { NodeSSH } = require("node-ssh");
 
-const { clear_folder } = require("./utils/file_utils");
+const { clear_output } = require("./utils/file_utils");
 const logger = require("./utils/logger");
 
 const OUTPUTS_DIR = `model_outputs`;
 
-const exec_model = async (resultName = "model_time_series.csv") => {
+const exec_model = async (workspace, resultName = "model_time_series.csv") => {
+  const filename = `${workspace}_${resultName}`;
   const {
     PG_HOST,
     PG_PORT,
@@ -17,7 +18,7 @@ const exec_model = async (resultName = "model_time_series.csv") => {
     MODEL_PASSWORD,
   } = process.env;
 
-  await clear_folder(OUTPUTS_DIR);
+  await clear_output(OUTPUTS_DIR, filename);
   return new Promise((res, rej) => {
     const ssh = new NodeSSH();
     ssh
@@ -29,7 +30,7 @@ const exec_model = async (resultName = "model_time_series.csv") => {
       .then(() => {
         ssh
           .execCommand(
-            `POSTGRES_ADDRESS=${PG_HOST} POSTGRES_PORT=${PG_PORT} POSTGRES_USERNAME=${PG_USER} POSTGRES_PASSWORD=${PG_PASSWORD} POSTGRES_DBNAME=${PG_DATABASE} python3 run_principal.py -o ${resultName}`,
+            `POSTGRES_ADDRESS=${PG_HOST} POSTGRES_PORT=${PG_PORT} POSTGRES_USERNAME=${PG_USER} POSTGRES_PASSWORD=${PG_PASSWORD} POSTGRES_DBNAME=${PG_DATABASE} python3 run_principal.py -o ${resultName} -w ${workspace}`,
             { cwd: "/home/model/app" }
           )
           .then((result) => {
@@ -42,7 +43,7 @@ const exec_model = async (resultName = "model_time_series.csv") => {
             logger.info(
               `Simulación finalizada. Código: ${result.code} - stdout: ${result.stdout}`
             );
-            res(path.join(process.cwd(), OUTPUTS_DIR, resultName));
+            res(path.join(process.cwd(), OUTPUTS_DIR, filename));
           })
           .catch((err) => {
             logger.error(`Simulación - error: ${err}`);
@@ -52,7 +53,7 @@ const exec_model = async (resultName = "model_time_series.csv") => {
   });
 };
 
-const upload_params = async (local_path, filename) => {
+const upload_params = async (file, workspace) => {
   const { MODEL_PASSWORD, MODEL_PARAMS_PATH } = process.env;
 
   return new Promise((res, rej) => {
@@ -66,8 +67,8 @@ const upload_params = async (local_path, filename) => {
       .then(() => {
         ssh
           .putFile(
-            `${local_path}/${filename}`,
-            `${MODEL_PARAMS_PATH}/${filename}`
+            `${file.destination}/${file.filename}`,
+            `${MODEL_PARAMS_PATH}/${workspace}_${file.filename}`
           )
           .then((result) => {
             logger.info("Archivo copiado exitosamente");
