@@ -1,5 +1,7 @@
 const express = require("express");
 const helmet = require("helmet");
+const { DBFFile } = require("dbffile");
+const oracledb = require('oracledb')
 
 const {
   upload: upload_file,
@@ -194,6 +196,88 @@ app.get(
     }
   })
 );
+
+app.get("/dbf", (req, res) => {
+  dbfRead();
+  res.send("DBF TEST");
+});
+
+async function dbfRead() {
+  let dbf = await DBFFile.open('../tmp/2018_cob_2.dbf'); //Ruta al archivo dbf
+  let fields = dbf.fields;
+  let records = await dbf.readRecords();
+  
+  const config = {
+    user: 'docker',
+    password: 'docker',
+    connectString: 'localhost:1522/gis'
+  }
+
+  conn = await oracledb.getConnection(config)
+  
+  let stringFields = [];
+  let fieldsName = [];
+  const tableName = 'tablatest';
+  
+  fields.map(function(f){
+    switch (f.type) {
+      case 'C':
+        stringFields.push(f.name + ' VARCHAR2(' + f.size +')');
+        break;
+      case 'N':
+        stringFields.push(f.name + ' NUMBER(' + f.size +')');
+        break;
+      case 'F':
+        stringFields.push(f.name + ' NUMBER');
+        break;
+      case 'L':
+        stringFields.push(f.name + ' NUMBER(1) DEFAULT 0');
+        break;
+      case 'D':
+        stringFields.push(f.name + ' DATE');
+        break;
+      case 'I':
+        stringFields.push(f.name + ' INTEGER(0,' + f.size +')');
+        break;
+        default:
+      case 'M':
+        stringFields.push(f.name + ' VARCHAR2(' + f.size +')');
+        break;
+      case 'T':
+        stringFields.push(f.name + ' DATETIME');
+        break;
+      case 'B':
+        stringFields.push(f.name + ' FLOAT(' + f.size +')');
+        break;
+    }
+    fieldsName.push(f.name);
+  });
+
+  const queryCreate = 'CREATE TABLE ' + tableName + ' (' + stringFields.toString() + ')'
+  
+  let result = await conn.execute(queryCreate)
+
+  const columns = fieldsName.toString();
+  console.log(queryCreate);
+
+  let stringInsert = [];
+  records.map(function(record) {
+    let stringRecord = [];
+    for (let field of fields) {
+      stringRecord.push("'" + record[field.name] + "'");
+    }
+    stringInsert+=' INTO ' + tableName +'('+columns+') VALUES('+stringRecord.toString()+')';
+  });
+
+  const queryInsert = 'INSERT ALL ' + stringInsert.toString() + ' SELECT * FROM '+ tableName +';'
+
+  console.log(queryInsert);
+
+  let r = await conn.execute(queryInsert, { autoCommit: true })
+
+  return fields, records;
+
+}
 
 app.use(error_handler);
 
