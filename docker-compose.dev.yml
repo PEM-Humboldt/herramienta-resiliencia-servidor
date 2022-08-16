@@ -66,6 +66,24 @@ services:
     networks:
       - server_net
 
+  oracle:
+
+    # Docker Hub image (feel free to change the tag "latest" to any other available one)
+    image: gvenzl/oracle-xe:latest
+
+    # Provide passwords and other environment variables to container
+    environment:
+      - ORACLE_PASSWORD=${PG_PASSWORD}
+      - APP_USER=${PG_USER}
+      - APP_USER_PASSWORD=${PG_PASSWORD}
+      - ORACLE_DATABASE=${PG_DATABASE}
+
+    container_name: tool_oracle_dev
+
+    # Forward Oracle port
+    ports:
+      - 1522:1521
+
 networks:
   server_net:
     driver: bridge
