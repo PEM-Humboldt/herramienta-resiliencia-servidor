@@ -203,20 +203,20 @@ app.get("/dbf", (req, res) => {
 });
 
 async function dbfRead() {
-  let dbf = await DBFFile.open('../tmp/2018_cob_2.dbf'); //Ruta al archivo dbf
+  let dbf = await DBFFile.open('../tmp/2018_cob_2.dbf', { encoding: 'UTF-8'}); //Ruta al archivo dbf
   let fields = dbf.fields;
   let records = await dbf.readRecords();
   
-  const config = {
+  const configConn = {
     user: 'docker',
     password: 'docker',
     connectString: 'localhost:1522/gis'
   }
 
-  conn = await oracledb.getConnection(config)
+  let conn = await oracledb.getConnection(configConn)
   
   let stringFields = [];
-  let fieldsName = [];
+  let columns = [];
   const tableName = 'tablatest';
   
   fields.map(function(f){
@@ -228,7 +228,7 @@ async function dbfRead() {
         stringFields.push(f.name + ' NUMBER(' + f.size +')');
         break;
       case 'F':
-        stringFields.push(f.name + ' NUMBER');
+        stringFields.push(f.name + ' FLOAT');
         break;
       case 'L':
         stringFields.push(f.name + ' NUMBER(1) DEFAULT 0');
@@ -250,33 +250,40 @@ async function dbfRead() {
         stringFields.push(f.name + ' FLOAT(' + f.size +')');
         break;
     }
-    fieldsName.push(f.name);
+    columns.push(":"+f.name);
   });
+
+  const queryDrop = "DECLARE cnt NUMBER; BEGIN SELECT COUNT(*) INTO cnt FROM user_tables WHERE table_name = '" + tableName.toUpperCase() + "'; IF cnt <> 0 THEN EXECUTE IMMEDIATE 'DROP TABLE " + tableName + "'; END IF; END; "
+  
+  let resultDrop = await conn.execute(queryDrop)
 
   const queryCreate = 'CREATE TABLE ' + tableName + ' (' + stringFields.toString() + ')'
   
-  let result = await conn.execute(queryCreate)
-
-  const columns = fieldsName.toString();
-  console.log(queryCreate);
+  let resultCreate = await conn.execute(queryCreate)
 
   let stringInsert = [];
   records.map(function(record) {
-    let stringRecord = [];
+    let values = [];
+    let value;
     for (let field of fields) {
-      stringRecord.push("'" + record[field.name] + "'");
+      values.push(record[field.name]);
     }
-    stringInsert+=' INTO ' + tableName +'('+columns+') VALUES('+stringRecord.toString()+')';
+    oracleInsert(conn, tableName, columns, values)
   });
+}
 
-  const queryInsert = 'INSERT ALL ' + stringInsert.toString() + ' SELECT * FROM '+ tableName +';'
+async function oracleInsert(conn, tableName, columns, values) {
 
-  console.log(queryInsert);
+  try {
+    const query = "INSERT INTO " + tableName + " VALUES(" + columns.toString() +")";
 
-  let r = await conn.execute(queryInsert, { autoCommit: true })
+    const result = await conn.execute(query, values,{ autoCommit: true});
 
-  return fields, records;
+    console.log(result);
 
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 app.use(error_handler);
