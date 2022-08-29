@@ -5,16 +5,15 @@ const { dbf2oracle } = require("./dbf2oracle");
 const logger = require("./logger");
 
 const upload_layer = async (folder, module, srid) => {
-
   const { DB_SYSTEM } = process.env;
-  if(DB_SYSTEM=='oracle'){
-    try{
+  if (DB_SYSTEM == "oracle") {
+    try {
       upload_to_oracle(folder, module);
     } catch (err) {
       logger.info(err);
     }
-  }else{
-    try{
+  } else {
+    try {
       upload_to_postgis(folder, module, srid);
     } catch (err) {
       logger.info(err);
@@ -32,10 +31,10 @@ const upload_to_oracle = async (folder, module) => {
     const err = new Error(`Ocurrió un error: ${error}`);
     err.code = "INTERNAL_ERROR";
     throw err;
-  }  
+  }
 
   let dbfPath = folder + "/" + dbf_file;
-  try{
+  try {
     dbf2oracle(dbfPath, module);
   } catch (err) {
     logger.info(err);
@@ -44,7 +43,7 @@ const upload_to_oracle = async (folder, module) => {
 
 const upload_to_postgis = async (folder, module, srid) => {
   let shp_file = "";
-  
+
   const files = await readdir(folder);
   shp_file = files.find((file) => file.endsWith(".shp"));
 
