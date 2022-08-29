@@ -1,7 +1,5 @@
 const express = require("express");
 const helmet = require("helmet");
-const { DBFFile } = require("dbffile");
-const oracledb = require('oracledb')
 
 const {
   upload: upload_file,
@@ -94,9 +92,12 @@ app.post(
       await create_workspace(workspaceName);
       await create_datastore(workspaceName, shp_name, zip_path);
 
-      // Load to PostGIS
+      // Load to DB
+      const { DB_SYSTEM } = process.env;
       await upload_layer(shp_folder, workspaceName, body.srid);
-      await drop_geom(workspaceName);
+      if(DB_SYSTEM!='oracle'){
+        await drop_geom(workspaceName);
+      }
       res.status(200).send({
         message: `Capa ${shp_name} cargada exitosamente para el workspace ${body.workspace}.`,
       });
@@ -196,95 +197,6 @@ app.get(
     }
   })
 );
-
-app.get("/dbf", (req, res) => {
-  dbfRead();
-  res.send("DBF TEST");
-});
-
-async function dbfRead() {
-  let dbf = await DBFFile.open('../tmp/2018_cob_2.dbf', { encoding: 'UTF-8'}); //Ruta al archivo dbf
-  let fields = dbf.fields;
-  let records = await dbf.readRecords();
-  
-  const configConn = {
-    user: 'docker',
-    password: 'docker',
-    connectString: 'localhost:1522/gis'
-  }
-
-  let conn = await oracledb.getConnection(configConn)
-  
-  let stringFields = [];
-  let columns = [];
-  const tableName = 'tablatest';
-  
-  fields.map(function(f){
-    switch (f.type) {
-      case 'C':
-        stringFields.push(f.name + ' VARCHAR2(' + f.size +')');
-        break;
-      case 'N':
-        stringFields.push(f.name + ' NUMBER(' + f.size +')');
-        break;
-      case 'F':
-        stringFields.push(f.name + ' FLOAT');
-        break;
-      case 'L':
-        stringFields.push(f.name + ' NUMBER(1) DEFAULT 0');
-        break;
-      case 'D':
-        stringFields.push(f.name + ' DATE');
-        break;
-      case 'I':
-        stringFields.push(f.name + ' INTEGER(0,' + f.size +')');
-        break;
-        default:
-      case 'M':
-        stringFields.push(f.name + ' VARCHAR2(' + f.size +')');
-        break;
-      case 'T':
-        stringFields.push(f.name + ' DATETIME');
-        break;
-      case 'B':
-        stringFields.push(f.name + ' FLOAT(' + f.size +')');
-        break;
-    }
-    columns.push(":"+f.name);
-  });
-
-  const queryDrop = "DECLARE cnt NUMBER; BEGIN SELECT COUNT(*) INTO cnt FROM user_tables WHERE table_name = '" + tableName.toUpperCase() + "'; IF cnt <> 0 THEN EXECUTE IMMEDIATE 'DROP TABLE " + tableName + "'; END IF; END; "
-  
-  let resultDrop = await conn.execute(queryDrop)
-
-  const queryCreate = 'CREATE TABLE ' + tableName + ' (' + stringFields.toString() + ')'
-  
-  let resultCreate = await conn.execute(queryCreate)
-
-  let stringInsert = [];
-  records.map(function(record) {
-    let values = [];
-    let value;
-    for (let field of fields) {
-      values.push(record[field.name]);
-    }
-    oracleInsert(conn, tableName, columns, values)
-  });
-}
-
-async function oracleInsert(conn, tableName, columns, values) {
-
-  try {
-    const query = "INSERT INTO " + tableName + " VALUES(" + columns.toString() +")";
-
-    const result = await conn.execute(query, values,{ autoCommit: true});
-
-    console.log(result);
-
-  } catch (err) {
-    console.error(err);
-  }
-}
 
 app.use(error_handler);
 
