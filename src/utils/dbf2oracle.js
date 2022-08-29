@@ -3,12 +3,19 @@ const oracledb = require('oracledb')
 const logger = require("./logger");
 
 const dbf2oracle = async (file, module) => {
-  let [ fields, columns, rows ] = await dbfRead(file);
-  const connection = await dbConnect();
-  await createTable(connection, module, fields);
-  rows.map(function(record){
-    insertRecords(connection, module, columns, record);
-  });
+  try {
+    let [ fields, columns, rows ] = await dbfRead(file);
+    const connection = await dbConnect();
+    await createTable(connection, module, fields);
+    rows.map(function(record){
+      insertRecords(connection, module, columns, record);
+    });
+  } catch (err) {
+    logger.info(err);
+    const error = new Error("Error al cargar DBF a Oracle.");
+    error.code = "INTERNAL_ERROR";
+    throw error;
+  }
 }
 
 const dbfRead = async (file) => {
@@ -25,6 +32,9 @@ const dbfRead = async (file) => {
     logger.info(`Lectura completa del archivo ${file}`);
   } catch (err) {
     logger.info(err);
+    const error = new Error(`Error al leer el archivo ${file}.`);
+    error.code = "INTERNAL_ERROR";
+    throw error;
   }
     
   fields.map(function(f){
@@ -87,6 +97,9 @@ const dbConnect = async () => {
     logger.info(`Conexión establecida a la base de datos Oracle`);
   } catch (err) {
     logger.info(err);
+    const error = new Error(`Error al establecer la conexión con la base de datos`);
+    error.code = "INTERNAL_ERROR";
+    throw error;
   }
 
   return connection;
@@ -103,6 +116,9 @@ const createTable =  async (connection, table_name, array_fields) => {
     logger.info(`Tabla ${table_name} creada exitosamente`);
   } catch (err) {
     logger.info(err);
+    const error = new Error(`Error al crear la tabla de en la base de datos`);
+    error.code = "INTERNAL_ERROR";
+    throw error;
   }
 }
 
@@ -113,6 +129,9 @@ const insertRecords = async (connection, table_name, columns, values) => {
     logger.info(`Registro cargado exitosamente`);
   } catch (err) {
     logger.info(err);
+    const error = new Error(`Error al insertar el registro`);
+    error.code = "INTERNAL_ERROR";
+    throw error;
   }
 }
 
