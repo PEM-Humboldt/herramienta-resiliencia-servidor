@@ -7,9 +7,9 @@ services:
       - "5432:5432"
     restart: always
     environment:
-      - POSTGRES_USER=${PG_USER}
-      - POSTGRES_PASS=${PG_PASSWORD}
-      - POSTGRES_DBNAME=${PG_DATABASE}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASS=${DB_PASSWORD}
+      - POSTGRES_DBNAME=${DB_NAME}
     networks:
       - server_net
 
@@ -40,9 +40,12 @@ services:
     environment:
       - PG_HOST=tool_db
       - PG_PORT=5432
-      - PG_DATABASE=${PG_DATABASE}
-      - PG_USER=${PG_USER}
-      - PG_PASSWORD=${PG_PASSWORD}
+      - ORACLE_HOST=tool_oracle
+      - ORACLE_PORT=1521
+      - DB_SYSTEM=${DB_SYSTEM}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
       - GS_USER=${GS_USER}
       - GS_PASS=${GS_PASS}
       - MODEL_PASSWORD=${MODEL_PASSWORD}
@@ -69,21 +72,18 @@ services:
     networks:
       - server_net
 
-  oracle:
+  tool_oracle:
 
-    # Docker Hub image (feel free to change the tag "latest" to any other available one)
     image: gvenzl/oracle-xe:latest
 
-    # Provide passwords and other environment variables to container
     environment:
       - ORACLE_PASSWORD=${PG_PASSWORD}
       - APP_USER=${PG_USER}
       - APP_USER_PASSWORD=${PG_PASSWORD}
-      - ORACLE_DATABASE=${PG_DATABASE}
+      - ORACLE_DATABASE=${DB_NAME}
 
     container_name: tool_oracle
 
-    # Forward Oracle port
     ports:
       - 1521:1521
 
