@@ -93,11 +93,8 @@ app.post(
       await create_datastore(workspaceName, shp_name, zip_path);
 
       // Load to DB
-      const { DB_SYSTEM } = process.env;
       await upload_layer(shp_folder, workspaceName, body.srid);
-      if(DB_SYSTEM!='oracle'){
-        await drop_geom(workspaceName);
-      }
+
       res.status(200).send({
         message: `Capa ${shp_name} cargada exitosamente para el workspace ${body.workspace}.`,
       });
