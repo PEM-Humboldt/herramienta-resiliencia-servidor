@@ -7,17 +7,9 @@ const logger = require("./logger");
 const upload_layer = async (folder, module, srid) => {
   const { DB_SYSTEM } = process.env;
   if (DB_SYSTEM == "oracle") {
-    try {
-      upload_to_oracle(folder, module);
-    } catch (err) {
-      logger.info(err);
-    }
+    await  upload_to_oracle(folder, module);
   } else {
-    try {
-      upload_to_postgis(folder, module, srid);
-    } catch (err) {
-      logger.info(err);
-    }
+    await upload_to_postgis(folder, module, srid);
   }
 };
 
@@ -33,19 +25,21 @@ const upload_to_oracle = async (folder, module) => {
     throw err;
   }
 
-  let dbfPath = folder + "/" + dbf_file;
-  try {
-    dbf2oracle(dbfPath, module);
-  } catch (err) {
-    logger.info(err);
-  }
+  let dbfPath = `${folder}/${dbf_file}`;
+  await dbf2oracle(dbfPath, module);
 };
 
 const upload_to_postgis = async (folder, module, srid) => {
   let shp_file = "";
 
-  const files = await readdir(folder);
-  shp_file = files.find((file) => file.endsWith(".shp"));
+  try {
+    const files = await readdir(folder);
+    shp_file = files.find((file) => file.endsWith(".shp"));
+  } catch (error) {
+    const err = new Error(`Ocurrió un error: ${error}`);
+    err.code = "INTERNAL_ERROR";
+    throw err;
+  }
 
   const { PG_HOST, DB_USER, DB_NAME, DB_PASSWORD, PG_PORT } = process.env;
 
