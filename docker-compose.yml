@@ -7,9 +7,9 @@ services:
       - "5432:5432"
     restart: always
     environment:
-      - POSTGRES_USER=${PG_USER}
-      - POSTGRES_PASS=${PG_PASSWORD}
-      - POSTGRES_DBNAME=${PG_DATABASE}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASS=${DB_PASSWORD}
+      - POSTGRES_DBNAME=${DB_NAME}
     networks:
       - server_net
 
@@ -40,9 +40,12 @@ services:
     environment:
       - PG_HOST=tool_db
       - PG_PORT=5432
-      - PG_DATABASE=${PG_DATABASE}
-      - PG_USER=${PG_USER}
-      - PG_PASSWORD=${PG_PASSWORD}
+      - ORACLE_HOST=tool_oracle
+      - ORACLE_PORT=1521
+      - DB_SYSTEM=${DB_SYSTEM}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
       - GS_USER=${GS_USER}
       - GS_PASS=${GS_PASS}
       - MODEL_PASSWORD=${MODEL_PASSWORD}
@@ -66,6 +69,19 @@ services:
     environment:
       - GEOSERVER_ADMIN_USER=${GS_USER}
       - GEOSERVER_ADMIN_PASSWORD=${GS_PASS}
+    networks:
+      - server_net
+
+  tool_oracle:
+    image: gvenzl/oracle-xe:latest
+    environment:
+      - ORACLE_PASSWORD=${DB_PASSWORD}
+      - APP_USER=${DB_USER}
+      - APP_USER_PASSWORD=${DB_PASSWORD}
+      - ORACLE_DATABASE=${DB_NAME}
+    container_name: tool_oracle
+    ports:
+      - 1521:1521
     networks:
       - server_net
 

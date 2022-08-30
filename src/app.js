@@ -92,9 +92,9 @@ app.post(
       await create_workspace(workspaceName);
       await create_datastore(workspaceName, shp_name, zip_path);
 
-      // Load to PostGIS
+      // Load to DB
       await upload_layer(shp_folder, workspaceName, body.srid);
-      await drop_geom(workspaceName);
+
       res.status(200).send({
         message: `Capa ${shp_name} cargada exitosamente para el workspace ${body.workspace}.`,
       });

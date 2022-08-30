@@ -1,10 +1,37 @@
 const { spawn } = require("child_process");
 const { readdir } = require("fs/promises");
+const { dbf2oracle } = require("./dbf2oracle");
 
 const logger = require("./logger");
 
 const upload_layer = async (folder, module, srid) => {
+  const { DB_SYSTEM } = process.env;
+  if (DB_SYSTEM == "oracle") {
+    await upload_to_oracle(folder, module);
+  } else {
+    await upload_to_postgis(folder, module, srid);
+  }
+};
+
+const upload_to_oracle = async (folder, module) => {
+  let dbf_file = "";
+
+  try {
+    const files = await readdir(folder);
+    dbf_file = files.find((file) => file.endsWith(".dbf"));
+  } catch (error) {
+    const err = new Error(`Ocurrió un error: ${error}`);
+    err.code = "INTERNAL_ERROR";
+    throw err;
+  }
+
+  const dbfPath = `${folder}/${dbf_file}`;
+  await dbf2oracle(dbfPath, module);
+};
+
+const upload_to_postgis = async (folder, module, srid) => {
   let shp_file = "";
+
   try {
     const files = await readdir(folder);
     shp_file = files.find((file) => file.endsWith(".shp"));
@@ -14,14 +41,15 @@ const upload_layer = async (folder, module, srid) => {
     throw err;
   }
 
-  const { PG_HOST, PG_USER, PG_DATABASE, PG_PASSWORD, PG_PORT } = process.env;
+  const { PG_HOST, DB_USER, DB_NAME, DB_PASSWORD, PG_PORT } = process.env;
+
   logger.info(
-    `shp2pgsql -d -D -s ${srid} -I ${folder}/${shp_file} public.${module} | PGPASSWORD=### psql -h ${PG_HOST} -p ${PG_PORT} -U ${PG_USER} -d ${PG_DATABASE}`
+    `shp2pgsql -d -D -s ${srid} -I ${folder}/${shp_file} public.${module} | PGPASSWORD=### psql -h ${PG_HOST} -p ${PG_PORT} -U ${DB_USER} -d ${DB_NAME}`
   );
   return new Promise((res, rej) => {
     const unzip = spawn("sh", [
       "-c",
-      `shp2pgsql -d -D -s ${srid} -I ${folder}/${shp_file} public.${module} | PGPASSWORD=${PG_PASSWORD} psql -h ${PG_HOST} -p ${PG_PORT} -U ${PG_USER} -d ${PG_DATABASE}`,
+      `shp2pgsql -d -D -s ${srid} -I ${folder}/${shp_file} public.${module} | PGPASSWORD=${DB_PASSWORD} psql -h ${PG_HOST} -p ${PG_PORT} -U ${DB_USER} -d ${DB_NAME}`,
     ]);
 
     unzip.stdout.on("data", (data) => {
@@ -33,6 +61,7 @@ const upload_layer = async (folder, module, srid) => {
     });
 
     unzip.on("close", (code) => {
+      drop_geom(module);
       logger.info(`Capa cargada. Código ${code}`);
       if (code === 0) {
         res();
@@ -44,14 +73,14 @@ const upload_layer = async (folder, module, srid) => {
 };
 
 const drop_geom = async (table) => {
-  const { PG_HOST, PG_USER, PG_DATABASE, PG_PASSWORD, PG_PORT } = process.env;
+  const { PG_HOST, DB_USER, DB_NAME, DB_PASSWORD, PG_PORT } = process.env;
   logger.info(
-    `Dropping geom column from public.${table} | PGPASSWORD=### psql -h ${PG_HOST} -p ${PG_PORT} -U ${PG_USER} -d ${PG_DATABASE}`
+    `Dropping geom column from public.${table} | PGPASSWORD=### psql -h ${PG_HOST} -p ${PG_PORT} -U ${DB_USER} -d ${DB_NAME}`
   );
   return new Promise((res, rej) => {
     const unzip = spawn("sh", [
       "-c",
-      `PGPASSWORD=${PG_PASSWORD} psql -h ${PG_HOST} -p ${PG_PORT} -U ${PG_USER} -d ${PG_DATABASE} -c 'ALTER table public.${table} DROP COLUMN geom'`,
+      `PGPASSWORD=${DB_PASSWORD} psql -h ${PG_HOST} -p ${PG_PORT} -U ${DB_USER} -d ${DB_NAME} -c 'ALTER table public.${table} DROP COLUMN geom'`,
     ]);
 
     unzip.stdout.on("data", (data) => {
@@ -73,4 +102,4 @@ const drop_geom = async (table) => {
   });
 };
 
-module.exports = { upload_layer, drop_geom };
+module.exports = { upload_layer };
