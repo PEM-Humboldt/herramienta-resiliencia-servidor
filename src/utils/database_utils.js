@@ -7,7 +7,7 @@ const logger = require("./logger");
 const upload_layer = async (folder, module, srid) => {
   const { DB_SYSTEM } = process.env;
   if (DB_SYSTEM == "oracle") {
-    await  upload_to_oracle(folder, module);
+    await upload_to_oracle(folder, module);
   } else {
     await upload_to_postgis(folder, module, srid);
   }
