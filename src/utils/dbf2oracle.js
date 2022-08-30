@@ -7,11 +7,9 @@ const dbf2oracle = async (file, module) => {
     let [fields, columns, rows] = await dbfRead(file);
     const connection = await dbConnect();
     await createTable(connection, module, fields);
-    rows.map(async (record) => {
-      await insertRecords(connection, module, columns, record);
-    });
+    await insertRecords(connection, module, columns, rows);
   } catch (err) {
-    logger.info(err);
+    logger.error(err);
     const error = new Error("Error al cargar DBF a Oracle.");
     error.code = "INTERNAL_ERROR";
     throw error;
@@ -31,7 +29,7 @@ const dbfRead = async (file) => {
     records = await dbf.readRecords();
     logger.info(`Lectura completa del archivo ${file}`);
   } catch (err) {
-    logger.info(err);
+    logger.error(err);
     const error = new Error(`Error al leer el archivo ${file}.`);
     error.code = "INTERNAL_ERROR";
     throw error;
@@ -72,7 +70,7 @@ const dbfRead = async (file) => {
   });
 
   let rows = [];
-  records.map(function (record) {
+  records.forEach(function (record) {
     let values = [];
     for (const field of fields) {
       values.push(record[field.name]);
@@ -95,11 +93,11 @@ const dbConnect = async () => {
 
   try {
     connection = await oracledb.getConnection(configConn);
-    logger.info(`Conexión establecida a la base de datos Oracle`);
+    logger.info("Conexión establecida a la base de datos Oracle");
   } catch (err) {
-    logger.info(err);
+    logger.error(err);
     const error = new Error(
-      `Error al establecer la conexión con la base de datos`
+      "Error al establecer la conexión con la base de datos"
     );
     error.code = "INTERNAL_ERROR";
     throw error;
@@ -123,14 +121,14 @@ const createTable = async (connection, table_name, array_fields) => {
 
     logger.info(`Tabla ${table_name} creada exitosamente`);
   } catch (err) {
-    logger.info(err);
-    const error = new Error(`Error al crear la tabla de en la base de datos`);
+    logger.error(err);
+    const error = new Error("Error al crear la tabla de en la base de datos");
     error.code = "INTERNAL_ERROR";
     throw error;
   }
 };
 
-const insertRecords = async (connection, table_name, columns, values) => {
+const insertRecords = async (connection, table_name, columns, records) => {
   try {
     const query =
       "INSERT INTO " +
@@ -138,11 +136,13 @@ const insertRecords = async (connection, table_name, columns, values) => {
       " VALUES(" +
       columns.toString() +
       ")";
-    await connection.execute(query, values, { autoCommit: true });
-    logger.info(`Registro cargado exitosamente`);
+    const result = await connection.executeMany(query, records, {
+      autoCommit: true,
+    });
+    logger.info("Registros cargados exitosamente ");
   } catch (err) {
-    logger.info(err);
-    const error = new Error(`Error al insertar el registro`);
+    logger.error(err);
+    const error = new Error("Error al insertar registros");
     error.code = "INTERNAL_ERROR";
     throw error;
   }

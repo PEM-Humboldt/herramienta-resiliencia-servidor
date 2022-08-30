@@ -25,7 +25,7 @@ const upload_to_oracle = async (folder, module) => {
     throw err;
   }
 
-  let dbfPath = `${folder}/${dbf_file}`;
+  const dbfPath = `${folder}/${dbf_file}`;
   await dbf2oracle(dbfPath, module);
 };
 
