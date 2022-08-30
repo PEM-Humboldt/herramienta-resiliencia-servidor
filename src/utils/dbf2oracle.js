@@ -70,7 +70,7 @@ const dbfRead = async (file) => {
   });
 
   let rows = [];
-  records.forEach(function (record) {
+  records.forEach((record) => {
     let values = [];
     for (const field of fields) {
       values.push(record[field.name]);
