@@ -24,7 +24,7 @@ const exec_model = async (workspace, resultName = "model_time_series.csv") => {
   let DB_HOST = "";
   let DB_PORT = "";
 
-  if (DB_SYSTEM == "oracle") {
+  if (DB_SYSTEM === "oracle") {
     DB_HOST = ORACLE_HOST;
     DB_PORT = ORACLE_PORT;
   } else {
