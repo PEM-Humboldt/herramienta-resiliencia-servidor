@@ -10,13 +10,27 @@ const OUTPUTS_DIR = `model_outputs`;
 const exec_model = async (workspace, resultName = "model_time_series.csv") => {
   const filename = `${workspace}_${resultName}`;
   const {
+    DB_SYSTEM,
     PG_HOST,
     PG_PORT,
-    PG_DATABASE,
-    PG_USER,
-    PG_PASSWORD,
+    ORACLE_HOST,
+    ORACLE_PORT,
+    DB_NAME,
+    DB_USER,
+    DB_PASSWORD,
     MODEL_PASSWORD,
   } = process.env;
+
+  let DB_HOST = "";
+  let DB_PORT = "";
+
+  if (DB_SYSTEM === "oracle") {
+    DB_HOST = ORACLE_HOST;
+    DB_PORT = ORACLE_PORT;
+  } else {
+    DB_HOST = PG_HOST;
+    DB_PORT = PG_PORT;
+  }
 
   await clear_output(OUTPUTS_DIR, filename);
   return new Promise((res, rej) => {
@@ -30,7 +44,7 @@ const exec_model = async (workspace, resultName = "model_time_series.csv") => {
       .then(() => {
         ssh
           .execCommand(
-            `POSTGRES_ADDRESS=${PG_HOST} POSTGRES_PORT=${PG_PORT} POSTGRES_USERNAME=${PG_USER} POSTGRES_PASSWORD=${PG_PASSWORD} POSTGRES_DBNAME=${PG_DATABASE} python3 run_principal.py -o ${resultName} -w ${workspace}`,
+            `DB_SYSTEM=${DB_SYSTEM} DB_ADDRESS=${DB_HOST} DB_PORT=${DB_PORT} DB_USERNAME=${DB_USER} DB_PASSWORD=${DB_PASSWORD} DB_NAME=${DB_NAME} python3 run_principal.py -o ${resultName} -w ${workspace}`,
             { cwd: "/home/model/app" }
           )
           .then((result) => {
