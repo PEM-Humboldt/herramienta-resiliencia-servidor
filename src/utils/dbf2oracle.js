@@ -83,12 +83,11 @@ const dbfRead = async (file) => {
 
 const dbConnect = async () => {
   let connection = {};
-  const { ORACLE_HOST, ORACLE_PORT, DB_USER, DB_NAME, DB_PASSWORD } =
-    process.env;
+  const { DB_HOST, DB_PORT, DB_USER, DB_NAME, DB_PASSWORD } = process.env;
   const configConn = {
     user: DB_USER,
     password: DB_PASSWORD,
-    connectString: `${ORACLE_HOST}:${ORACLE_PORT}/${DB_NAME}`,
+    connectString: `${DB_HOST}:${DB_PORT}/${DB_NAME}`,
   };
 
   try {

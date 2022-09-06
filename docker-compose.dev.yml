@@ -1,87 +1,19 @@
 version: "3"
 services:
-  tool_db:
-    image: kartoza/postgis:13.0
-    container_name: tool_db_dev
-    ports:
-      - "5433:5432"
-    environment:
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASS=${DB_PASSWORD}
-      - POSTGRES_DBNAME=${DB_NAME}
-    networks:
-      - server_net
-
   tool_simulator:
     build:
       context: ../herramienta-resiliencia-simulador #local clone of the model repo
       args:
         userpassword: ${MODEL_PASSWORD}
     image: tool_simulator_dev
-    container_name: tool_simulator_dev
-    volumes:
-      - ${MODEL_OUPUTS_DIR}:/home/model/app/outputs
-    networks:
-      - server_net
+    restart: "no"
 
   tool_server:
     build:
       context: .
       dockerfile: Dockerfile.dev
     image: tool_server_dev
-    container_name: tool_server_dev
-    ports:
-      - "3001:3000"
+    restart: "no"
     volumes:
       - .:/home/node/app #dev volume
       - ${MODEL_OUPUTS_DIR}:/home/node/app/model_outputs
-    environment:
-      - PG_HOST=tool_db
-      - PG_PORT=5432
-      - ORACLE_HOST=tool_oracle_dev
-      - ORACLE_PORT=1521
-      - DB_SYSTEM=${DB_SYSTEM}
-      - DB_NAME=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - GS_USER=${GS_USER}
-      - GS_PASS=${GS_PASS}
-      - MODEL_PASSWORD=${MODEL_PASSWORD}
-      - MODEL_PARAMS_PATH=/home/model/app/condiciones_iniciales/
-    networks:
-      - server_net
-
-  geoserver:
-    image: kartoza/geoserver:2.20.2
-    container_name: geoserver_dev
-    ports:
-      - "8081:8080"
-    volumes:
-      - ${GS_DATA_DIR}:/opt/geoserver/data_dir
-    healthcheck:
-      test: curl --fail -s http://localhost:8080/ || exit 1
-      interval: 1m30s
-      timeout: 10s
-      retries: 3
-    environment:
-      - GEOSERVER_ADMIN_USER=${GS_USER}
-      - GEOSERVER_ADMIN_PASSWORD=${GS_PASS}
-    networks:
-      - server_net
-
-  tool_oracle:
-    image: gvenzl/oracle-xe:latest
-    environment:
-      - ORACLE_PASSWORD=${DB_PASSWORD}
-      - APP_USER=${DB_USER}
-      - APP_USER_PASSWORD=${DB_PASSWORD}
-      - ORACLE_DATABASE=${DB_NAME}
-    container_name: tool_oracle_dev
-    ports:
-      - 1522:1521
-    networks:
-      - server_net
-
-networks:
-  server_net:
-    driver: bridge

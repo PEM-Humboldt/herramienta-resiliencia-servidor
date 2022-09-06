@@ -11,26 +11,13 @@ const exec_model = async (workspace, resultName = "model_time_series.csv") => {
   const filename = `${workspace}_${resultName}`;
   const {
     DB_SYSTEM,
-    PG_HOST,
-    PG_PORT,
-    ORACLE_HOST,
-    ORACLE_PORT,
+    DB_PORT,
+    DB_HOST,
     DB_NAME,
     DB_USER,
     DB_PASSWORD,
     MODEL_PASSWORD,
   } = process.env;
-
-  let DB_HOST = "";
-  let DB_PORT = "";
-
-  if (DB_SYSTEM === "oracle") {
-    DB_HOST = ORACLE_HOST;
-    DB_PORT = ORACLE_PORT;
-  } else {
-    DB_HOST = PG_HOST;
-    DB_PORT = PG_PORT;
-  }
 
   await clear_output(OUTPUTS_DIR, filename);
   return new Promise((res, rej) => {

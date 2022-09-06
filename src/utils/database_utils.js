@@ -41,15 +41,15 @@ const upload_to_postgis = async (folder, module, srid) => {
     throw err;
   }
 
-  const { PG_HOST, DB_USER, DB_NAME, DB_PASSWORD, PG_PORT } = process.env;
+  const { DB_HOST, DB_USER, DB_NAME, DB_PASSWORD, DB_PORT } = process.env;
 
   logger.info(
-    `shp2pgsql -d -D -s ${srid} -I ${folder}/${shp_file} public.${module} | PGPASSWORD=### psql -h ${PG_HOST} -p ${PG_PORT} -U ${DB_USER} -d ${DB_NAME}`
+    `shp2pgsql -d -D -s ${srid} -I ${folder}/${shp_file} public.${module} | PGPASSWORD=### psql -h ${DB_HOST} -p ${DB_PORT} -U ${DB_USER} -d ${DB_NAME}`
   );
   return new Promise((res, rej) => {
     const unzip = spawn("sh", [
       "-c",
-      `shp2pgsql -d -D -s ${srid} -I ${folder}/${shp_file} public.${module} | PGPASSWORD=${DB_PASSWORD} psql -h ${PG_HOST} -p ${PG_PORT} -U ${DB_USER} -d ${DB_NAME}`,
+      `shp2pgsql -d -D -s ${srid} -I ${folder}/${shp_file} public.${module} | PGPASSWORD=${DB_PASSWORD} psql -h ${DB_HOST} -p ${DB_PORT} -U ${DB_USER} -d ${DB_NAME}`,
     ]);
 
     unzip.stdout.on("data", (data) => {
@@ -73,14 +73,14 @@ const upload_to_postgis = async (folder, module, srid) => {
 };
 
 const drop_geom = async (table) => {
-  const { PG_HOST, DB_USER, DB_NAME, DB_PASSWORD, PG_PORT } = process.env;
+  const { DB_HOST, DB_USER, DB_NAME, DB_PASSWORD, DB_PORT } = process.env;
   logger.info(
-    `Dropping geom column from public.${table} | PGPASSWORD=### psql -h ${PG_HOST} -p ${PG_PORT} -U ${DB_USER} -d ${DB_NAME}`
+    `Dropping geom column from public.${table} | PGPASSWORD=### psql -h ${DB_HOST} -p ${DB_PORT} -U ${DB_USER} -d ${DB_NAME}`
   );
   return new Promise((res, rej) => {
     const unzip = spawn("sh", [
       "-c",
-      `PGPASSWORD=${DB_PASSWORD} psql -h ${PG_HOST} -p ${PG_PORT} -U ${DB_USER} -d ${DB_NAME} -c 'ALTER table public.${table} DROP COLUMN geom'`,
+      `PGPASSWORD=${DB_PASSWORD} psql -h ${DB_HOST} -p ${DB_PORT} -U ${DB_USER} -d ${DB_NAME} -c 'ALTER table public.${table} DROP COLUMN geom'`,
     ]);
 
     unzip.stdout.on("data", (data) => {
