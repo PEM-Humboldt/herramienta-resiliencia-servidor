@@ -1,5 +1,11 @@
 version: "3"
 services:
+  tool_db:
+    restart: "no"
+    ports:
+      - "5432:5432"
+      - "1521:1521"
+
   tool_simulator:
     build:
       context: ../herramienta-resiliencia-simulador #local clone of the model repo
