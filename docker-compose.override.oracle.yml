@@ -1,0 +1,18 @@
+version: "3"
+services:
+  tool_db:
+    image: gvenzl/oracle-xe:latest
+    container_name: tool_db
+    restart: always
+    environment:
+      - ORACLE_PASSWORD=${DB_PASSWORD}
+      - APP_USER=${DB_USER}
+      - APP_USER_PASSWORD=${DB_PASSWORD}
+      - ORACLE_DATABASE=${DB_NAME}
+    networks:
+      - server_net
+
+  tool_server:
+    environment:
+      - DB_PORT=1521
+      - DB_SYSTEM=oracle

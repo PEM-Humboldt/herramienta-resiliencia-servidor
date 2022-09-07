@@ -131,5 +131,5 @@ module.exports = {
   extract,
   compress,
   clear_folder,
-  clear_output
+  clear_output,
 };

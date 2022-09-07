@@ -18,27 +18,42 @@ El nombre sugerido para la carpeta a asociar a la variable GS_DATA_DIR es 'geose
 
 ## Cómo ejecutar
 
-1. Configure las variables de ambiente necesarias para el funcionamiento de la herramienta (los valores aquí puestos son ejemplos y deben ser cambiados):
-   ```sh
-   export PG_DATABASE=gis PG_USER=docker PG_PASSWORD=docker GS_USER=admin GS_PASS=geoserver GS_DATA_DIR='../geoserver_data' MODEL_OUPUTS_DIR='../model_outputs' MODEL_PASSWORD='model_password'
-   ```
-1. Ejecute docker-compose con el archivo principal:
-   ```
-   docker-compose up -d
-   ```
+1. Configure las variables de ambiente necesarias para el funcionamiento de la herramienta. En el archivo .env de este repositorio se encuetnran unos valores de ejemplo de dichas variables, si lo desea, puede cambiar esos valores y guardarlos en el archivo, pero recuerde no versionar esos cambios. A continuación se presetan las variables necesarias:
+
+   - DB_NAME: nombre de la base de datos con la que se va a trabajar
+   - DB_USER: usuario para acceder a la base de datos
+   - DB_PASSWORD: contraseña del usuario indicado
+   - GS_USER: nombre del usuario administrador de geoserver
+   - GS_PASS: contraseña del administrador de geoserver
+   - GS_DATA_DIR: ruta a la carpeta en el host donde se almacenaran los datos de geoserver (puede ser relativa a la ubicación del archivo docker-compose.yml de este repositorio)
+   - MODEL_OUPUTS_DIR: ruta a la carpeta en el host donde se almacenaran los resultados de la ejecución del simulador (puede ser relativa a la ubicación del archivo docker-compose.yml de este repositorio)
+   - MODEL_PASSWORD: contraseña para el usuario que ejecuta el simulador
+
+1. Puede correr el sistema de 2 formas: con postgres o con oracle.
+
+   - Para correr el sistema con postgres, ejecute:
+     ```
+     docker-compose up -d
+     ```
+   - Para correr el sistema con oracle, ejecute:
+     ```
+     docker-compose -f docker-compose.yml -f docker-compose.override.oracle.yml up -d
+     ```
 
 ## Modo desarrollo
 
 Para el modo desarrollo, siga los siguientes pasos:
 
 1. Descargue el [código del simulador](https://github.com/PEM-Humboldt/herramienta-resiliencia-simulador) en la misma ruta donde almacenó el [código del servidor](https://github.com/PEM-Humboldt/herramienta-resiliencia-servidor)
-1. Configure las variables de ambiente:
-   ```sh
-   export DB_SYSTEM=oracle|postgres DB_NAME=gis DB_USER=docker DB_PASSWORD=docker GS_USER=admin GS_PASS=geoserver GS_DATA_DIR='../geoserver_data' MODEL_OUPUTS_DIR='../model_outputs' MODEL_PASSWORD='model_password'
+1. Configure las mismas variables de ambiente explicadas en la sección anterior.
+
+1. Para correr el sistema con postgres:
    ```
-1. Ejecute docker-compose con el archivo de desarrollo:
+   docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.dev.yml up -d
    ```
-   docker-compose -f docker-compose.dev.yml up -d
+   O con oracle:
+   ```
+   docker-compose -f docker-compose.yml -f docker-compose.override.oracle.yml -f docker-compose.dev.yml up -d
    ```
 
 ## Probar endpoints
@@ -52,6 +67,7 @@ Ejecute `npm run docs` en la raíz del proyecto para generar la documentación d
 ## Autores
 
 - **Erika Suárez Valencia** - [erikasv](https://github.com/erikasv)
+- **Manuel Galvez** - [ManuelStardust](https://github.com/ManuelStardust)
 
 ## Licencia
 

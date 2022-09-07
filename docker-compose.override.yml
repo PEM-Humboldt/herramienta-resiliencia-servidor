@@ -1,0 +1,17 @@
+version: "3"
+services:
+  tool_db:
+    image: kartoza/postgis:13.0
+    container_name: tool_db
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASS=${DB_PASSWORD}
+      - POSTGRES_DBNAME=${DB_NAME}
+    networks:
+      - server_net
+
+  tool_server:
+    environment:
+      - DB_PORT=5432
+      - DB_SYSTEM=postgres
