@@ -196,7 +196,7 @@
       "modified": 1657816047434,
       "created": 1645647669967,
       "name": "aws-dev",
-      "data": { "host": "http://3.238.127.200:3000" },
+      "data": { "host": "http://3.239.125.192:3000" },
       "dataPropertyOrder": { "&": ["host"] },
       "color": null,
       "isPrivate": false,
