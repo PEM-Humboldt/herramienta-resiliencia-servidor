@@ -29,29 +29,11 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
+      - GS_ENABLE=false
       - GS_USER=${GS_USER}
       - GS_PASS=${GS_PASS}
       - MODEL_PASSWORD=${MODEL_PASSWORD}
       - MODEL_PARAMS_PATH=/home/model/app/condiciones_iniciales/
-    networks:
-      - server_net
-
-  geoserver:
-    image: kartoza/geoserver:2.20.2
-    container_name: geoserver
-    ports:
-      - "8080:8080"
-    volumes:
-      - ${GS_DATA_DIR}:/opt/geoserver/data_dir
-    healthcheck:
-      test: curl --fail -s http://localhost:8080/ || exit 1
-      interval: 1m30s
-      timeout: 10s
-      retries: 3
-    restart: always
-    environment:
-      - GEOSERVER_ADMIN_USER=${GS_USER}
-      - GEOSERVER_ADMIN_PASSWORD=${GS_PASS}
     networks:
       - server_net
 

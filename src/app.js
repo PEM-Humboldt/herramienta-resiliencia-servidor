@@ -87,10 +87,14 @@ app.post(
       const workspace = body.workspace?.replace(/\s+/g, " ").trim();
       const workspaceName = `${workspace}_${body.module}`;
 
+      const { GS_ENABLE } = process.env;
+
       // Load to Geoserver
-      const zip_path = await compress_file(workspaceName, shp_folder);
-      await create_workspace(workspaceName);
-      await create_datastore(workspaceName, shp_name, zip_path);
+      if (GS_ENABLE === "true") {
+        const zip_path = await compress_file(workspaceName, shp_folder);
+        await create_workspace(workspaceName);
+        await create_datastore(workspaceName, shp_name, zip_path);
+      }
 
       // Load to DB
       await upload_layer(shp_folder, workspaceName, body.srid);
