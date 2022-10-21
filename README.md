@@ -29,6 +29,8 @@ El nombre sugerido para la carpeta a asociar a la variable GS_DATA_DIR es 'geose
    - MODEL_OUPUTS_DIR: ruta a la carpeta en el host donde se almacenaran los resultados de la ejecución del simulador (puede ser relativa a la ubicación del archivo docker-compose.yml de este repositorio)
    - MODEL_PASSWORD: contraseña para el usuario que ejecuta el simulador
 
+Actualemente el uso de Geoserver es opcional, por tanto las variables GS_USER, GS_PASS y GS_DATA_DIR solo son necesarias en caso de habilitar Geoserver.
+
 2. Puede correr el sistema de 2 formas: con postgres o con oracle.
 
    - Para correr el sistema con postgres, ejecute:
