@@ -168,12 +168,13 @@ app.post(
  *
  * @apiQuery {String} result_name name for the simulator results file
  * @apiQuery {String} workspace workspace name
+ * @apiQuery {String} separator decimal separator name
  *
  * @apiSuccess {File} Result csv file to be downloaded
  *
  * @apiExample {curl} Example usage:
  * curl --request GET \
- *  --url 'http://localhost:3000/exec?result_name=escenario1.csv&workspace=nucleo1'
+ *  --url 'http://localhost:3000/exec?result_name=escenario1.csv&workspace=nucleo1&separator=punto'
  */
 app.get(
   "/exec",
@@ -189,7 +190,7 @@ app.get(
       throw error;
     }
     try {
-      const result_file = await exec_model(query.workspace, outputName);
+      const result_file = await exec_model(query.workspace, outputName, query.separator);
       res.download(result_file);
     } catch (error) {
       const err = new Error(error || "Ocurrió un error");

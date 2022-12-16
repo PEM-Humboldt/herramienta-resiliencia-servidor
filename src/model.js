@@ -7,7 +7,7 @@ const logger = require("./utils/logger");
 
 const OUTPUTS_DIR = `model_outputs`;
 
-const exec_model = async (workspace, resultName = "model_time_series.csv") => {
+const exec_model = async (workspace, resultName = "model_time_series.csv", decimalSeparator = "coma") => {
   const filename = `${workspace}_${resultName}`;
   const {
     DB_SYSTEM,
@@ -31,7 +31,7 @@ const exec_model = async (workspace, resultName = "model_time_series.csv") => {
       .then(() => {
         ssh
           .execCommand(
-            `DB_SYSTEM=${DB_SYSTEM} DB_ADDRESS=${DB_HOST} DB_PORT=${DB_PORT} DB_USERNAME=${DB_USER} DB_PASSWORD=${DB_PASSWORD} DB_NAME=${DB_NAME} python3 run_principal.py -o ${resultName} -w ${workspace}`,
+            `DB_SYSTEM=${DB_SYSTEM} DB_ADDRESS=${DB_HOST} DB_PORT=${DB_PORT} DB_USERNAME=${DB_USER} DB_PASSWORD=${DB_PASSWORD} DB_NAME=${DB_NAME} python3 run_principal.py -o ${resultName} -w ${workspace} -d ${decimalSeparator}`,
             { cwd: "/home/model/app" }
           )
           .then((result) => {
