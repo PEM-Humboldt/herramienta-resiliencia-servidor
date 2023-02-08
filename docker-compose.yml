@@ -25,15 +25,15 @@ services:
       - ${MODEL_OUPUTS_DIR}:/home/node/app/model_outputs
     restart: always
     environment:
-      - DB_HOST=tool_db
+      - DB_HOST=${DB_ADDRESS}
+      - DB_PORT=${DB_PORT}
+      - DB_SYSTEM=${DB_SYSTEM}
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
-      - GS_ENABLE=false
-      - GS_USER=${GS_USER}
-      - GS_PASS=${GS_PASS}
       - MODEL_PASSWORD=${MODEL_PASSWORD}
       - MODEL_PARAMS_PATH=/home/model/app/condiciones_iniciales/
+      - GS_ENABLE=false
     networks:
       - server_net
 

@@ -14,5 +14,6 @@ services:
 
   tool_server:
     environment:
+      - DB_HOST=tool_db
       - DB_PORT=1521
       - DB_SYSTEM=oracle
