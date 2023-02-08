@@ -12,6 +12,7 @@ Servicio para interactuar con el [simulador de la herramienta de resiliencia](ht
    1. [Ejecución con base de datos externa](#ejecución-con-una-base-de-datos-externa)
    1. [Ejecución creando una base de datos](#ejecución-incluyendo-la-creación-de-una-base-de-datos)
    1. [Ejecución habilitando GeoServer](#ejecución-habilitando-geoserver)
+   1. [Actualización](#actualización-de-imágenes)
 1. [Instalación en modo desarrollo](#modo-desarrollo)
 1. Endpoints
    1. [Pruebas](#probar-endpoints)
@@ -92,6 +93,20 @@ Por ejemplo, para usar el GeoSerer y crear una base de datos PostGIS:
 
 ```
 docker-compose -f docker-compose.yml -f docker-compose.override.postgis.yml -f docker-compose.override.geoserver.yml up -d
+```
+
+## Actualización de imágenes
+
+La primera vez que se levantan los contenedores, las imágenes de los componentes del servidor y el simulador son creadas. Para actualizar estas imágenes (por ejemplo después de cambios en el código) debe ejecutar:
+
+```
+docker-compose -f docker-compose.yml build
+```
+
+y después volver a ejecutar el comando con el que haya levantado el sistema, por ejemplo, usando una base de datos externa:
+
+```
+docker-compose -f docker-compose.yml up -d
 ```
 
 # Modo desarrollo
