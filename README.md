@@ -85,6 +85,8 @@ Para crear una base de datos **Oracle** junto con la creación del servidor y el
 docker-compose -f docker-compose.yml -f docker-compose.override.oracle.yml up -d
 ```
 
+Tenga en cuenta que la base de datos de Oracle se demora en estar lista para ser usada, puede ver los logs del contenedor con `docker logs tool_db` (Espere hasta que vea el mensaje `DATABASE IS READY TO USE!`).
+
 ## Ejecución habilitando GeoServer
 
 Para usar GeoServer, ejecute cualquiera de los comandos de las secciones [con base de datos externa](#ejecución-con-una-base-de-datos-externa) o [creando una base de datos](#ejecución-incluyendo-la-creación-de-una-base-de-datos) con la opción `-f docker-compose.override.geoserver.yml`
