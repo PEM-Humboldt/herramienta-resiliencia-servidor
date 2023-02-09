@@ -91,7 +91,7 @@ Tenga en cuenta que la base de datos de Oracle se demora en estar lista para ser
 
 Para usar GeoServer, ejecute cualquiera de los comandos de las secciones [con base de datos externa](#ejecución-con-una-base-de-datos-externa) o [creando una base de datos](#ejecución-incluyendo-la-creación-de-una-base-de-datos) con la opción `-f docker-compose.override.geoserver.yml`
 
-Por ejemplo, para usar el GeoSerer y crear una base de datos PostGIS:
+Por ejemplo, para usar el GeoServer y crear una base de datos PostGIS:
 
 ```
 docker-compose -f docker-compose.yml -f docker-compose.override.postgis.yml -f docker-compose.override.geoserver.yml up -d
@@ -117,7 +117,7 @@ El modo desarrollo está pensado para facilitar las pruebas de cambios realizado
 
 Para tener el ambiente de desarrollo listo siga los siguientes pasos:
 
-1. clone el [simulador](https://github.com/PEM-Humboldt/herramienta-resiliencia-simulador) en la misma carpeta donde clonó este repositorio (Servidor).
+1. Clone el [simulador](https://github.com/PEM-Humboldt/herramienta-resiliencia-simulador) en la misma carpeta donde clonó este repositorio (Servidor).
 
 1. Cree las carpetas y configure las variables de ambiente descritas en la sección [Preparación](#preparación).
 
