@@ -12,6 +12,7 @@ Servicio para interactuar con el [simulador de la herramienta de resiliencia](ht
    1. [Ejecución con base de datos externa](#ejecución-con-una-base-de-datos-externa)
    1. [Ejecución creando una base de datos](#ejecución-incluyendo-la-creación-de-una-base-de-datos)
    1. [Ejecución habilitando GeoServer](#ejecución-habilitando-geoserver)
+   1. [Ejecución sin docker-compose](#ejecución-sin-docker-compose)
    1. [Actualización](#actualización-de-imágenes)
 1. [Instalación en modo desarrollo](#modo-desarrollo)
 1. Endpoints
@@ -96,6 +97,19 @@ Por ejemplo, para usar el GeoServer y crear una base de datos PostGIS:
 ```
 docker-compose -f docker-compose.yml -f docker-compose.override.postgis.yml -f docker-compose.override.geoserver.yml up -d
 ```
+
+## Ejecución sin docker-compose
+
+Si no desea usar docker-compose puede levantar los contenedores con docker como se explica en los siguientes pasos. Estos pasos no incluyen la creación de una base de datos ni el uso de GeoServer y requieren los mismos pasos previos y configuraciones.
+
+**Es importante que las rutas a las carpetas creadas sean rutas absolutas**. Todos los comandos se ejecutan desde la carpeta de este repositorio.
+
+1. Si las variables de ambiente sólo fueron definidas en el archivo `.env`, debe cargarlas antes de ejecutar los demás comandos: `source .env`
+1. Debe crear una red, por ejemplo llamada fibras: `docker network create fibras`
+1. Construya la imagen del simulador: `docker build -t simulator --build-arg userpassword=$MODEL_PASSWORD 'https://github.com/PEM-Humboldt/herramienta-resiliencia-simulador.git#main'`
+1. Construya la imagen del servidor: `docker build -t server .`
+1. Cree el contenedor para el simulador: `docker run --name simulator -v $MODEL_OUPUTS_DIR:/home/model/app/outputs --net fibras --restart always -d simulator`
+1. Cree el contenedor para el servidor: `docker run --name server -p 3000:3000 -v $MODEL_OUPUTS_DIR:/home/node/app/model_outputs --net fibras --restart always -e DB_HOST=$DB_ADDRESS -e DB_PORT=$DB_PORT -e DB_SYSTEM=$DB_SYSTEM -e DB_NAME=$DB_NAME -e DB_USER=$DB_USER -e DB_PASSWORD=$DB_PASSWORD -e MODEL_HOST=simulator -e MODEL_PASSWORD=$MODEL_PASSWORD -e MODEL_PARAMS_PATH=/home/model/app/condiciones_iniciales/ -e GS_ENABLE=false -d server`
 
 ## Actualización de imágenes
 
