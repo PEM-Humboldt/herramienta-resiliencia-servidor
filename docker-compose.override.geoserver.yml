@@ -19,7 +19,8 @@ services:
     networks:
       - server_net
 
-
   tool_server:
     environment:
       - GS_ENABLE=true
+      - GS_USER=${GS_USER}
+      - GS_PASS=${GS_PASS}
