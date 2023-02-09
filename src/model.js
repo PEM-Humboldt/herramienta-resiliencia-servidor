@@ -6,8 +6,13 @@ const { clear_output } = require("./utils/file_utils");
 const logger = require("./utils/logger");
 
 const OUTPUTS_DIR = `model_outputs`;
+const { MODEL_HOST } = process.env;
 
-const exec_model = async (workspace, resultName = "model_time_series.csv", decimalSeparator = "coma") => {
+const exec_model = async (
+  workspace,
+  resultName = "model_time_series.csv",
+  decimalSeparator = "coma"
+) => {
   const filename = `${workspace}_${resultName}`;
   const {
     DB_SYSTEM,
@@ -24,7 +29,7 @@ const exec_model = async (workspace, resultName = "model_time_series.csv", decim
     const ssh = new NodeSSH();
     ssh
       .connect({
-        host: "tool_simulator",
+        host: MODEL_HOST,
         username: "model",
         password: MODEL_PASSWORD,
       })
@@ -61,7 +66,7 @@ const upload_params = async (file, workspace) => {
     const ssh = new NodeSSH();
     ssh
       .connect({
-        host: "tool_simulator",
+        host: MODEL_HOST,
         username: "model",
         password: MODEL_PASSWORD,
       })

@@ -31,6 +31,7 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
+      - MODEL_HOST=tool_simulator
       - MODEL_PASSWORD=${MODEL_PASSWORD}
       - MODEL_PARAMS_PATH=/home/model/app/condiciones_iniciales/
       - GS_ENABLE=false
